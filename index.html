@@ -2,35 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CATTABRIGA QUANT LAB — Ultimate Portfolio</title>
+<title>Edoardo Cattabriga — Trading Portfolio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-/* ===========================
-   GLOBAL RESET
-=========================== */
+/* ===== GLOBAL RESET ===== */
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow-x:hidden; font-family:Arial, sans-serif; background:#000; scroll-behavior:smooth; }
+html, body { width:100%; height:100%; font-family:Arial, sans-serif; background:#000; color:white; scroll-behavior:smooth; }
 
-/* ===========================
-   FULLSCREEN CANVAS
-=========================== */
-#glCanvas, #particlesCanvas { position:fixed; top:0; left:0; width:100%; height:100%; display:block; z-index:-1; }
+/* ===== FULLSCREEN CANVAS FOR RAINBOW ===== */
+#rainbowCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
-/* ===========================
-   CINEMATIC INTRO
-=========================== */
+/* ===== CINEMATIC INTRO ===== */
 #intro {
     position:fixed; top:0; left:0; width:100%; height:100%;
-    background:black; display:flex; justify-content:center; align-items:center; flex-direction:column;
-    z-index:10000; animation:fadeOut 7s forwards ease-in-out;
+    display:flex; justify-content:center; align-items:center; flex-direction:column;
+    background:black; z-index:1000; animation:fadeOutIntro 6s forwards ease-in-out;
 }
-@keyframes fadeOut { 0%{opacity:1;} 70%{opacity:1;} 100%{opacity:0; visibility:hidden;} }
+@keyframes fadeOutIntro { 0%{opacity:1;} 80%{opacity:1;} 100%{opacity:0; visibility:hidden;} }
 
 .intro-text {
-    font-size:3.5rem; font-weight:bold; color:white; text-align:center;
-    opacity:0; text-shadow:0 0 20px white; animation:glitchIn 3s forwards ease;
+    font-size:3rem; font-weight:bold; text-align:center;
+    color:white; text-shadow:0 0 20px white;
+    animation:glitchIn 3s forwards ease;
 }
-#intro2 { animation-delay:3.5s; }
+#intro2 { animation-delay:3s; }
 @keyframes glitchIn {
     0% { opacity:0; transform:scale(0.9); filter:blur(10px); }
     20% { opacity:1; transform:scale(1); filter:blur(0); }
@@ -40,62 +35,35 @@ html, body { width:100%; height:100%; overflow-x:hidden; font-family:Arial, sans
     100% { opacity:1; }
 }
 
-/* ===========================
-   NEON SECTIONS
-=========================== */
+/* ===== SECTIONS ===== */
 section {
-    width:100%; min-height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column;
-    color:white; text-align:center; padding:50px 20px; position:relative;
+    width:100%; min-height:100vh; display:flex; flex-direction:column;
+    justify-content:center; align-items:center; padding:50px 20px; text-align:center;
 }
 
-section h1 { font-size:3rem; margin-bottom:20px; color:#fff; text-shadow:0 0 20px #fff; }
-section p { font-size:1.2rem; max-width:700px; line-height:1.6; color:#ccc; text-shadow:0 0 10px #fff; }
-
+/* ===== NEON PANELS ===== */
 .neon-panel {
-    padding:20px; border:1px solid rgba(255,255,255,0.2); border-radius:10px; backdrop-filter:blur(8px);
-    background:rgba(255,255,255,0.05); box-shadow:0 0 20px rgba(255,255,255,0.3); margin:20px 0; animation:float 6s infinite ease-in-out;
+    background:rgba(255,255,255,0.05); border-radius:10px; padding:20px; margin:20px 0;
+    backdrop-filter:blur(8px); box-shadow:0 0 20px rgba(255,255,255,0.3);
+    animation:float 6s infinite ease-in-out;
 }
 @keyframes float { 0%{transform:translateY(0);}50%{transform:translateY(-10px);}100%{transform:translateY(0);} }
 
-/* ===========================
-   SKILLS BARS
-=========================== */
-.skill-bar {
-    position:relative; width:80%; max-width:700px; height:20px; background:rgba(255,255,255,0.05); border-radius:10px; margin:15px 0;
-}
-.skill-bar-inner {
-    height:100%; width:0%; border-radius:10px; background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet); transition:width 2s ease;
-}
+/* ===== SKILLS BARS ===== */
+.skill-bar { width:80%; max-width:700px; height:20px; background:rgba(255,255,255,0.05); border-radius:10px; margin:15px 0; }
+.skill-bar-inner { height:100%; width:0%; border-radius:10px; background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet); transition:width 2s ease; }
 
-/* ===========================
-   PORTFOLIO TILES
-=========================== */
-.portfolio-container { display:flex; flex-wrap:wrap; justify-content:center; margin-top:30px; gap:20px; }
-.portfolio-tile {
-    width:250px; height:150px; border:1px solid rgba(255,255,255,0.2); border-radius:10px;
-    backdrop-filter:blur(8px); background:rgba(255,255,255,0.05); box-shadow:0 0 20px rgba(255,255,255,0.3);
-    display:flex; justify-content:center; align-items:center; font-weight:bold; text-align:center; color:white;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-.portfolio-tile:hover {
-    transform:translateY(-10px) rotateX(5deg) rotateY(5deg);
-    box-shadow:0 0 40px rgba(255,0,255,1), 0 0 60px rgba(0,255,255,1);
-}
+/* ===== TRADING CHARTS ===== */
+.chart-container { width:80%; max-width:900px; height:400px; margin:20px auto; background:rgba(255,255,255,0.05); border-radius:15px; padding:15px; box-shadow:0 0 20px rgba(255,255,255,0.3); }
 
-/* ===========================
-   CONTACT BUTTONS
-=========================== */
-.contact-btn {
-    padding:15px 30px; margin:10px; border:none; border-radius:10px; background:linear-gradient(45deg, red, orange, yellow, green, cyan, blue, violet);
-    color:black; font-weight:bold; cursor:pointer; box-shadow:0 0 20px rgba(255,255,255,0.3); transition: transform 0.2s;
-}
-.contact-btn:hover { transform:scale(1.1); }
+/* ===== OTHER COOL THINGS ===== */
+.cool-container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-top:30px; }
+.cool-tile { width:250px; height:150px; background:rgba(255,255,255,0.05); border-radius:15px; display:flex; justify-content:center; align-items:center; font-weight:bold; color:white; box-shadow:0 0 20px rgba(255,255,255,0.3); transition:transform 0.3s, box-shadow 0.3s; }
+.cool-tile:hover { transform:translateY(-10px) rotateX(5deg) rotateY(5deg); box-shadow:0 0 40px rgba(255,0,255,1),0 0 60px rgba(0,255,255,1); }
 
-/* ===========================
-   CURSOR
-=========================== */
+/* ===== CURSOR ===== */
 #cursor {
-    position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:10001;
+    position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:1001;
     background:radial-gradient(circle, white, rgba(255,255,255,0));
     box-shadow:0 0 20px rgba(255,0,255,1),0 0 40px rgba(0,255,255,1),0 0 60px rgba(255,255,0,1);
     mix-blend-mode:screen; transition:transform 0.08s linear;
@@ -106,60 +74,49 @@ section p { font-size:1.2rem; max-width:700px; line-height:1.6; color:#ccc; text
 
 <!-- CINEMATIC INTRO -->
 <div id="intro">
-    <div class="intro-text" id="intro1">CATTABRIGA QUANT LAB</div>
-    <div class="intro-text" id="intro2">EDOARDO CATTABRIGA — Quantum Trader</div>
+    <div class="intro-text" id="intro1">🌈 Rainbow Singularity</div>
+    <div class="intro-text" id="intro2">Edoardo Cattabriga — Quantum Trader</div>
 </div>
 
-<!-- CANVAS LAYERS -->
-<canvas id="glCanvas"></canvas>
-<canvas id="particlesCanvas"></canvas>
+<!-- RAINBOW CANVAS -->
+<canvas id="rainbowCanvas"></canvas>
 
 <!-- CURSOR -->
 <div id="cursor"></div>
 
-<!-- ABOUT ME -->
+<!-- ABOUT ME SECTION -->
 <section id="about">
     <h1>About Me</h1>
     <div class="neon-panel">
-        Hello, I'm <strong>Edoardo Cattabriga</strong>, a trader with 10 years of experience mastering algorithmic trading, cryptocurrencies, and global markets. My portfolio blends **quantitative strategies**, **technical analysis**, and a passion for **innovation**.
+        I'm <strong>Edoardo Cattabriga</strong>, a trader with 10 years of experience in algorithmic trading, crypto markets, and risk management. I specialize in **high-frequency trading**, **market prediction algorithms**, and **quantitative strategies**.
     </div>
 </section>
 
-<!-- SKILLS -->
-<section id="skills">
-    <h1>Skills</h1>
-    <div class="skill-bar"><div class="skill-bar-inner" data-skill="90%"></div>Trading</div>
-    <div class="skill-bar"><div class="skill-bar-inner" data-skill="85%"></div>Algorithmic Strategies</div>
-    <div class="skill-bar"><div class="skill-bar-inner" data-skill="80%"></div>Cryptocurrency</div>
-    <div class="skill-bar"><div class="skill-bar-inner" data-skill="75%"></div>Stocks</div>
-    <div class="skill-bar"><div class="skill-bar-inner" data-skill="95%"></div>Risk Management</div>
-</section>
-
-<!-- PORTFOLIO -->
-<section id="portfolio">
-    <h1>Portfolio</h1>
-    <div class="portfolio-container">
-        <div class="portfolio-tile">High-Frequency Trading Algo</div>
-        <div class="portfolio-tile">Crypto Arbitrage Bot</div>
-        <div class="portfolio-tile">Market Sentiment Analyzer</div>
-        <div class="portfolio-tile">Volatility Forecast Dashboard</div>
+<!-- TRADING GRAPHS -->
+<section id="graphs">
+    <h1>Trading Graphs</h1>
+    <div class="chart-container">
+        <canvas id="lineChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="candleChart"></canvas>
     </div>
 </section>
 
-<!-- CONTACT -->
-<section id="contact">
-    <h1>Contact</h1>
-    <div>
-        <button class="contact-btn">LinkedIn</button>
-        <button class="contact-btn">Twitter</button>
-        <button class="contact-btn">Email</button>
+<!-- OTHER COOL THINGS -->
+<section id="cool">
+    <h1>Other Cool Things</h1>
+    <div class="cool-container">
+        <div class="cool-tile">Neural Market Pulse</div>
+        <div class="cool-tile">Rainbow Risk Gauge</div>
+        <div class="cool-tile">Crypto Volatility Map</div>
+        <div class="cool-tile">Trading Bot Dashboard</div>
     </div>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-/* ===========================
-   CURSOR
-=========================== */
+/* ===== CURSOR ===== */
 const cursor = document.getElementById("cursor");
 document.addEventListener("mousemove", e => {
     cursor.style.left = e.clientX + "px";
@@ -168,61 +125,66 @@ document.addEventListener("mousemove", e => {
     setTimeout(()=>cursor.style.transform="scale(1)",50);
 });
 
-/* ===========================
-   PARTICLES
-=========================== */
-const pCanvas = document.getElementById("particlesCanvas");
-const pCtx = pCanvas.getContext("2d");
-function resize() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+/* ===== RAINBOW CANVAS ===== */
+const canvas = document.getElementById('rainbowCanvas');
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 resize(); window.onresize=resize;
 
-let particles=[]; for(let i=0;i<900;i++){
-    let theta=Math.random()*2*Math.PI, phi=Math.acos(2*Math.random()-1), r=180;
-    particles.push({x:r*Math.sin(phi)*Math.cos(theta),y:r*Math.sin(phi)*Math.sin(theta),z:r*Math.cos(phi),size:Math.random()*2+1});
+let t=0;
+function rainbow() {
+    t+=0.01;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+    gradient.addColorStop(0, `hsl(${(t*100)%360}, 100%, 50%)`);
+    gradient.addColorStop(0.5, `hsl(${(t*100+120)%360}, 100%, 50%)`);
+    gradient.addColorStop(1, `hsl(${(t*100+240)%360}, 100%, 50%)`);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    requestAnimationFrame(rainbow);
 }
+rainbow();
 
-let angle=0;
-function drawParticles(){
-    pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
-    angle+=0.003; let sin=Math.sin(angle), cos=Math.cos(angle);
-    for(let p of particles){
-        let x=p.x*cos-p.z*sin, z=p.z*cos+p.x*sin, scale=300/(300+z), px=x*scale+pCanvas.width/2, py=p.y*scale+pCanvas.height/2;
-        let hue=(angle*1000+p.x+p.y)%360;
-        pCtx.fillStyle=`hsl(${hue},100%,60%)`;
-        pCtx.beginPath(); pCtx.arc(px,py,p.size*scale,0,Math.PI*2); pCtx.fill();
-    }
-    requestAnimationFrame(drawParticles);
-}
-drawParticles();
-
-/* ===========================
-   SKILLS ANIMATION
-=========================== */
+/* ===== SKILLS ANIMATION ===== */
 window.addEventListener("load", ()=>{
     document.querySelectorAll(".skill-bar-inner").forEach(el=>{
-        el.style.width = el.getAttribute("data-skill");
+        el.style.width = el.getAttribute("data-skill") || "80%";
     });
 });
 
-/* ===========================
-   SIMPLE WEBGL RAINBOW NEBULA
-=========================== */
-const canvas = document.getElementById("glCanvas");
-const gl = canvas.getContext("webgl");
-function resizeGL(){canvas.width=window.innerWidth; canvas.height=window.innerHeight; gl.viewport(0,0,gl.canvas.width,gl.canvas.height);}
-resizeGL(); window.addEventListener("resize", resizeGL);
+/* ===== TRADING GRAPHS ===== */
+const lineCtx = document.getElementById('lineChart').getContext('2d');
+new Chart(lineCtx, {
+    type: 'line',
+    data: {
+        labels: Array.from({length:20},(_,i)=>`T${i+1}`),
+        datasets: [{
+            label: 'Portfolio Value',
+            data: Array.from({length:20},()=>Math.floor(Math.random()*1000+1000)),
+            borderColor: 'rgba(0,255,255,1)',
+            backgroundColor:'rgba(0,255,255,0.2)',
+            fill:true,
+            tension:0.3
+        }]
+    },
+    options: { responsive:true, plugins:{legend:{labels:{color:'white'}}}, scales:{x:{ticks:{color:'white'}}, y:{ticks:{color:'white'}}} }
+});
 
-const vs=`attribute vec2 aPosition; void main(){ gl_Position=vec4(aPosition,0.0,1.0); }`;
-const fs=`precision highp float; uniform float uTime; uniform vec2 uRes; vec3 spectrum(float x){return 0.5+0.5*cos(6.2831*(vec3(0.0,0.33,0.67)+x));} void main(){vec2 uv=gl_FragCoord.xy/uRes.xy; float t=uTime*0.05; float v=0.0; v+=sin((uv.x+uv.y+t)*10.0); v+=sin((uv.x*4.0 - uv.y*3.0 + t)*8.0); v+=sin((uv.x*10.0 + uv.y*10.0 - t*2.0)*4.0); v=v/3.0; vec3 col=spectrum(v+t*0.1); gl_FragColor=vec4(col,0.35);}`;
-
-function compileShader(type,src){const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s;}
-const prog=gl.createProgram(); gl.attachShader(prog,compileShader(gl.VERTEX_SHADER,vs)); gl.attachShader(prog,compileShader(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(prog); gl.useProgram(prog);
-const quad=new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]);
-const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,quad,gl.STATIC_DRAW);
-const aPos=gl.getAttribLocation(prog,"aPosition"); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
-const uTime=gl.getUniformLocation(prog,"uTime"); const uRes=gl.getUniformLocation(prog,"uRes");
-function render(t){ gl.uniform1f(uTime,t*0.001); gl.uniform2f(uRes,canvas.width,canvas.height); gl.drawArrays(gl.TRIANGLES,0,6); requestAnimationFrame(render);}
-requestAnimationFrame(render);
+const candleCtx = document.getElementById('candleChart').getContext('2d');
+new Chart(candleCtx, {
+    type: 'bar',
+    data: {
+        labels: Array.from({length:20},(_,i)=>`T${i+1}`),
+        datasets: [{
+            label: 'Price Movement',
+            data: Array.from({length:20},()=>Math.floor(Math.random()*50+100)),
+            backgroundColor: 'rgba(255,0,255,0.6)',
+            borderColor:'rgba(255,255,255,0.8)',
+            borderWidth:1
+        }]
+    },
+    options: { responsive:true, plugins:{legend:{labels:{color:'white'}}}, scales:{x:{ticks:{color:'white'}}, y:{ticks:{color:'white'}}} }
+});
 </script>
 </body>
 </html>
