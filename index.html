@@ -1,290 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edoardo – Futuristic Trading Portfolio</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8" />
+<title>CATTABRIGA QUANT LAB — Rainbow Singularity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
+/* ===========================
+    GLOBAL RESET
+=========================== */
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:100%; height:100%; overflow:hidden; background:#000; font-family:Arial, sans-serif; }
 
-/* RESET */
-*{margin:0;padding:0;box-sizing:border-box;}
-body{
-    background:#05060b;
-    color:#fff;
-    font-family:"Inter",sans-serif;
-    overflow-x:hidden;
-}
-
-/* BACKGROUND PARTICLES */
-.particles{
+/* ===========================
+    FULLSCREEN CANVAS LAYERS
+=========================== */
+#glCanvas, #particlesCanvas {
     position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    pointer-events:none;
-    z-index:-2;
-}
-.particles span{
-    position:absolute;
-    width:4px;height:4px;
-    background:#00fff2;
-    border-radius:50%;
-    opacity:.7;
-    animation: floatUp 6s linear infinite;
-}
-@keyframes floatUp{
-    0%{transform:translateY(0) scale(0.8);}
-    100%{transform:translateY(-120vh) scale(1.8);opacity:0;}
+    top:0; left:0;
+    width:100%; height:100%;
+    display:block;
 }
 
-/* HERO AREA */
-header{
-    height:100vh;
+/* ===========================
+    CINEMATIC INTRO
+=========================== */
+#intro {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:black;
     display:flex;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
-    text-align:center;
-    position:relative;
-    overflow:hidden;
+    flex-direction:column;
+    z-index:10000;
+    animation:fadeOut 7s forwards ease-in-out;
 }
 
-/* 3D PARALLAX */
-.parallax{
-    position:absolute;
-    width:130%;
-    height:130%;
-    top:-15%;left:-15%;
-    background:radial-gradient(circle at 40% 40%, #00fff2 0%, transparent 50%),
-               radial-gradient(circle at 75% 50%, #0066ff 0%, transparent 50%);
-    filter:blur(120px);
-    transition:0.1s linear;
-    z-index:-1;
+@keyframes fadeOut {
+    0% { opacity:1; }
+    70% { opacity:1; }
+    100% { opacity:0; visibility:hidden; }
 }
 
-/* TITLE */
-.hero-title{
-    font-size:5rem;
-    font-weight:900;
-    background:linear-gradient(90deg,#00fff2,#0099ff);
-    -webkit-background-clip:text;
-    color:transparent;
-    letter-spacing:-2px;
-    text-shadow:0 0 45px rgba(0,255,242,.55);
-    animation:titlePulse 4s ease-in-out infinite;
-}
-@keyframes titlePulse{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.03);}
-    100%{transform:scale(1);}
-}
-.hero-subtitle{
-    font-size:1.3rem;
-    opacity:.85;
-}
-
-/* MAGNETIC BUTTON */
-.btn{
-    margin-top:40px;
-    padding:16px 45px;
-    border:2px solid #00fff2;
-    border-radius:40px;
-    color:#00fff2;
-    cursor:pointer;
-    font-size:1.1rem;
-    position:relative;
-    overflow:hidden;
-    transition:0.3s;
-}
-.btn:hover{
-    background:#00fff2;
-    color:#000;
-    box-shadow:0 0 25px #00fff2;
-    transform:translateY(-4px);
-}
-
-/* SECTION */
-section{
-    max-width:1200px;
-    margin:120px auto;
-    padding:20px;
-}
-
-/* SECTION TITLES */
-.section-title{
-    font-size:3rem;
-    font-weight:900;
-    background:linear-gradient(90deg,#00fff2,#0077ff);
-    -webkit-background-clip:text;
-    color:transparent;
-    margin-bottom:20px;
-}
-
-/* HOLOGRAPHIC CARDS */
-.cards{
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
-    gap:30px;
-    margin-top:40px;
-}
-.card{
-    padding:30px;
-    background:rgba(255,255,255,0.06);
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,0.18);
-    backdrop-filter:blur(18px);
-    transition:.35s;
-    position:relative;
-    overflow:hidden;
-}
-.card::before{
-    content:"";
-    position:absolute;
-    top:-50%;
-    left:-50%;
-    width:200%;
-    height:200%;
-    background:conic-gradient(from 0deg,#00fff2,#0059ff,#00fff2);
-    opacity:.14;
-    animation:spin 12s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-.card:hover{
-    transform:translateY(-12px) scale(1.04);
-    box-shadow:0 0 35px rgba(0,255,242,.28);
-}
-
-/* STATS */
-.stats{
-    display:flex;
-    justify-content:space-between;
-    margin-top:50px;
-    flex-wrap:wrap;
-}
-.stat{
-    text-align:center;
-    width:30%;
-    min-width:190px;
-    margin:20px 0;
-}
-.stat-number{
+.intro-text {
     font-size:3.5rem;
-    font-weight:900;
-    color:#00fff2;
-    text-shadow:0 0 18px #00fff2;
-}
-
-/* FOOTER */
-footer{
+    font-weight:bold;
+    color:white;
     text-align:center;
-    padding:60px;
-    color:#777;
-    font-size:0.9rem;
+    opacity:0;
+    text-shadow:0 0 20px white;
+    animation:glitchIn 3s forwards ease;
 }
 
+#intro2 {
+    animation-delay:3.5s;
+}
+
+@keyframes glitchIn {
+    0% { opacity:0; transform:scale(0.9); filter:blur(10px); }
+    20% { opacity:1; transform:scale(1); filter:blur(0); }
+    30% { transform:translateX(-5px); }
+    32% { transform:translateX(5px); }
+    34% { transform:translateX(0); }
+    100% { opacity:1; }
+}
+
+/* ===========================
+    HOLOGRAM PANELS
+=========================== */
+#hud {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+    mix-blend-mode:screen;
+    z-index:999;
+}
+
+.holo {
+    position:absolute;
+    padding:20px;
+    border:1px solid rgba(255,255,255,0.2);
+    border-radius:8px;
+    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.03);
+    color:white;
+    font-size:1rem;
+    box-shadow:0 0 15px rgba(255,255,255,0.3);
+    animation:float 6s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% { transform:translateY(0); }
+    50% { transform:translateY(-10px); }
+    100% { transform:translateY(0); }
+}
+
+#panel-left { left:40px; top:40px; width:220px; }
+#panel-right { right:40px; top:40px; width:260px; }
+
+/* ===========================
+    RAINBOW LIQUID CURSOR
+=========================== */
+#cursor {
+    position:fixed;
+    width:18px; height:18px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:10001;
+    background:radial-gradient(circle, white, rgba(255,255,255,0));
+    box-shadow:
+        0 0 20px rgba(255,0,255,1),
+        0 0 40px rgba(0,255,255,1),
+        0 0 60px rgba(255,255,0,1);
+    mix-blend-mode:screen;
+    transition:transform 0.08s linear;
+}
 </style>
 </head>
 <body>
 
-<div class="particles"></div>
-
-<header>
-    <div class="parallax" id="parallax-bg"></div>
-
-    <h1 class="hero-title">Edoardo</h1>
-    <p class="hero-subtitle">The Futuristic Trader With 10 Years of Fictional Mastery</p>
-    <a class="btn">Enter Portfolio</a>
-</header>
-
-<section>
-    <h2 class="section-title">About Me</h2>
-    <p style="font-size:1.25rem;opacity:.85;line-height:1.8;">
-        I’m Edoardo — a next-level trader blending algorithmic mastery,  
-        precision execution, and futuristic market modeling.  
-        A decade of fictional expertise forged into a disciplined, data-driven edge  
-        operating across Forex, Crypto, and Global Indices.
-    </p>
-</section>
-
-<section>
-    <h2 class="section-title">Expertise</h2>
-
-    <div class="cards">
-        <div class="card">
-            <h3>⚡ Advanced Market Vision</h3>
-            <p>Elite-level price action, liquidity mapping, and volatility forecasting.</p>
-        </div>
-
-        <div class="card">
-            <h3>🤖 AI Algorithmic Trading</h3>
-            <p>Self-optimizing trading bots powered by statistical & machine learning models.</p>
-        </div>
-
-        <div class="card">
-            <h3>📉 Risk & Capital Engineering</h3>
-            <p>Institutional risk balancing, capital scaling, and multi-asset hedging.</p>
-        </div>
+<!-- ===========================
+     CINEMATIC INTRO SEQUENCE
+=========================== -->
+<div id="intro">
+    <div class="intro-text" id="intro1">CATTABRIGA QUANT LAB</div>
+    <div class="intro-text" id="intro2" style="animation-delay:3.5s;">
+        EDOARDO CATTABRIGA — Quantum Trader
     </div>
-</section>
+</div>
 
-<section>
-    <h2 class="section-title">Performance Stats</h2>
+<!-- ===========================
+     CANVAS LAYERS
+=========================== -->
+<canvas id="glCanvas"></canvas>
+<canvas id="particlesCanvas"></canvas>
 
-    <div class="stats">
-        <div class="stat">
-            <div class="stat-number" data-target="10">0</div>
-            <p>Years Experience</p>
-        </div>
-        <div class="stat">
-            <div class="stat-number" data-target="487">0</div>
-            <p>Profitable Trades</p>
-        </div>
-        <div class="stat">
-            <div class="stat-number" data-target="92">0</div>
-            <p>Win Rate (%)</p>
-        </div>
+<!-- ===========================
+     HUD PANELS
+=========================== -->
+<div id="hud">
+    <div class="holo" id="panel-left">
+        <strong>Neural Metrics</strong><br><br>
+        • Volatility Flux: 98%<br>
+        • Trend Signal: RAINBOW BREAKOUT<br>
+        • Liquidity Waveform: ACTIVE<br>
+        • Quantum Sync: STABLE
     </div>
-</section>
 
-<footer>© 2025 Edoardo — Futuristic Trading Portfolio</footer>
+    <div class="holo" id="panel-right">
+        <strong>Live System Status</strong><br><br>
+        • Particle Core: ONLINE<br>
+        • Shader Engine: MAXED<br>
+        • Spectrum Shift: ACTIVE<br>
+        • CPU Usage: HIGH (😈)
+    </div>
+</div>
+
+<!-- ===========================
+     CURSOR ELEMENT
+=========================== -->
+<div id="cursor"></div>
 
 <script>
-
-/* PARALLAX BACKGROUND */
-document.addEventListener("mousemove", e=>{
-    const bg=document.getElementById("parallax-bg");
-    let x=(e.clientX/window.innerWidth - 0.5)*50;
-    let y=(e.clientY/window.innerHeight - 0.5)*50;
-    bg.style.transform=`translate(${x}px, ${y}px) scale(1.2)`;
+/* ===========================
+    RAINBOW CURSOR
+=========================== */
+const cursor = document.getElementById("cursor");
+document.addEventListener("mousemove", e => {
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+    cursor.style.transform = "scale(1.5)";
+    setTimeout(()=>cursor.style.transform="scale(1)",50);
 });
 
-/* FLOATING PARTICLES */
-const particleContainer=document.querySelector('.particles');
-for(let i=0;i<60;i++){
-    let p=document.createElement("span");
-    p.style.left=Math.random()*100+"%";
-    p.style.animationDelay=Math.random()*6+"s";
-    p.style.opacity=Math.random()*0.9;
-    particleContainer.appendChild(p);
+/* ===========================
+    PARTICLE NEURAL SPHERE
+=========================== */
+const pCanvas = document.getElementById("particlesCanvas");
+const pCtx = pCanvas.getContext("2d");
+
+function resize() {
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+}
+resize();
+window.onresize = resize;
+
+let particles = [];
+const COUNT = 900;
+
+for(let i=0; i<COUNT; i++){
+    let theta = Math.random() * 2 * Math.PI;
+    let phi = Math.acos(2 * Math.random() - 1);
+    let r = 180;
+
+    particles.push({
+        x: r * Math.sin(phi) * Math.cos(theta),
+        y: r * Math.sin(phi) * Math.sin(theta),
+        z: r * Math.cos(phi),
+        size: Math.random() * 2 + 1
+    });
 }
 
-/* COUNTER ANIMATION */
-document.querySelectorAll(".stat-number").forEach(counter=>{
-    const target=+counter.getAttribute("data-target");
-    let current=0;
-    const speed=target/90;
-    const update=()=>{
-        current+=speed;
-        counter.innerText=Math.floor(current);
-        if(current<target)requestAnimationFrame(update);
-        else counter.innerText=target;
-    };
-    update();
-});
+let angle = 0;
+
+function drawParticles(){
+    pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+
+    angle += 0.003;
+    let sin = Math.sin(angle);
+    let cos = Math.cos(angle);
+
+    for(let p of particles){
+        let x = p.x * cos - p.z * sin;
+        let z = p.z * cos + p.x * sin;
+
+        let scale = 300 / (300 + z);
+        let px = x * scale + pCanvas.width/2;
+        let py = p.y * scale + pCanvas.height/2;
+
+        // spectral rainbow color
+        let hue = (angle*1000 + p.x + p.y) % 360;
+        pCtx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+
+        pCtx.beginPath();
+        pCtx.arc(px, py, p.size*scale, 0, Math.PI*2);
+        pCtx.fill();
+    }
+
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ===========================
+    RAINBOW NEBULA WEBGL BACKGROUND
+=========================== */
+const canvas = document.getElementById("glCanvas");
+const gl = canvas.getContext("webgl");
+
+function resizeGL(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0,0,gl.canvas.width, gl.canvas.height);
+}
+resizeGL();
+window.addEventListener("resize", resizeGL);
+
+// minimal shader for rainbow nebula
+const vs = `
+attribute vec2 aPosition;
+void main() {
+    gl_Position = vec4(aPosition,0.0,1.0);
+}
+`;
+
+const fs = `
+precision highp float;
+uniform float uTime;
+uniform vec2 uRes;
+
+vec3 spectrum(float x){
+    return 0.5 + 0.5*cos(6.2831*(vec3(0.0,0.33,0.67)+x));
+}
+
+void main(){
+    vec2 uv = gl_FragCoord.xy/uRes.xy;
+    float t = uTime*0.05;
+
+    float v = 0.0;
+    v += sin((uv.x+uv.y+t)*10.0);
+    v += sin((uv.x*4.0 - uv.y*3.0 + t)*8.0);
+    v += sin((uv.x*10.0 + uv.y*10.0 - t*2.0)*4.0);
+    v = v/3.0;
+
+    vec3 col = spectrum(v + t*0.1);
+
+    gl_FragColor = vec4(col, 0.35);
+}
+`;
+
+function compileShader(type,source){
+    const s = gl.createShader(type);
+    gl.shaderSource(s,source);
+    gl.compileShader(s);
+    return s;
+}
+
+const vShader = compileShader(gl.VERTEX_SHADER,vs);
+const fShader = compileShader(gl.FRAGMENT_SHADER,fs);
+
+const prog = gl.createProgram();
+gl.attachShader(prog,vShader);
+gl.attachShader(prog,fShader);
+gl.linkProgram(prog);
+gl.useProgram(prog);
+
+const quad = new Float32Array([
+    -1,-1,  1,-1, -1,1,
+    -1,1,   1,-1,  1,1
+]);
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,quad,gl.STATIC_DRAW);
+
+const aPos = gl.getAttribLocation(prog,"aPosition");
+gl.enableVertexAttribArray(aPos);
+gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
+
+const uTime = gl.getUniformLocation(prog,"uTime");
+const uRes = gl.getUniformLocation(prog,"uRes");
+
+function render(t){
+    gl.uniform1f(uTime, t*0.001);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES,0,6);
+    requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
 
 </script>
-
 </body>
 </html>
