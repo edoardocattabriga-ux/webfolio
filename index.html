@@ -2,331 +2,385 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Edoardo Cattabriga — Quantum Trading Portfolio</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Edoardo Cattabriga — Quantum Trading Universe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght:300;600&display=swap" rel="stylesheet">
-
-<!-- THREE.js -->
+<!-- Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
 <style>
-/* === GLOBAL RESET === */
-*{margin:0;padding:0;box-sizing:border-box;}
+/* =======================================================
+   GLOBAL + RESET
+======================================================= */
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-    background:black; color:white; font-family:Montserrat, sans-serif;
-    overflow-x:hidden;
+    background:#000;color:#fff;font-family:Montserrat,sans-serif;
+    overflow-x:hidden;-webkit-tap-highlight-color:transparent;
 }
 
-/* === SECTIONS === */
+/* Dynamic root scaling */
+html{font-size:16px}
+@media(max-width:700px){html{font-size:14px}}
+
+/* =======================================================
+   NAVIGATION BAR + MOBILE MENU
+======================================================= */
+nav{
+    position:fixed;top:0;left:0;width:100%;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:15px 25px;
+    background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
+    z-index:9999;
+}
+nav .logo{font-family:Orbitron;font-size:1.4rem;text-shadow:0 0 10px cyan;}
+nav ul{display:flex;gap:25px;list-style:none}
+nav ul li a{color:white;text-decoration:none;font-family:Orbitron}
+#menuBtn{
+    display:none;font-size:1.8rem;cursor:pointer;
+}
+@media(max-width:800px){
+    nav ul{
+        position:fixed;top:70px;right:-100%;
+        flex-direction:column;background:rgba(0,0,0,0.9);
+        width:200px;padding:30px;transition:.3s;gap:20px;border-left:2px solid cyan;
+    }
+    nav ul.show{right:0;}
+    #menuBtn{display:block;}
+}
+
+/* =======================================================
+   SECTIONS
+======================================================= */
 section{
-    min-height:100vh; padding:120px 20px;
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
-    opacity:0; transform:translateY(60px); transition:1s;
+    min-height:100vh;padding:130px 20px 80px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    opacity:0;transform:translateY(40px);transition:1s;
 }
 section.visible{opacity:1;transform:translateY(0);}
-h1{font-family:Orbitron;font-size:3rem;text-shadow:0 0 20px cyan;margin-bottom:30px;}
+h1{
+    font-family:Orbitron;font-size:3rem;text-shadow:0 0 15px cyan;
+}
+@media(max-width:700px){h1{font-size:2.2rem}}
 
-/* === PANEL === */
+/* =======================================================
+   PANELS
+======================================================= */
 .panel{
-    max-width:900px;background:rgba(255,255,255,0.06);padding:30px;border-radius:15px;
-    backdrop-filter:blur(8px);
-    box-shadow:0 0 30px rgba(0,255,255,0.3);
-    animation:float 6s infinite ease-in-out;
-    font-size:1.2rem;line-height:1.7em;
+    width:100%;max-width:900px;padding:25px;border-radius:15px;
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(6px);
+    box-shadow:0 0 25px cyan;text-align:center;line-height:1.7rem;
 }
-@keyframes float{0%{transform:translateY(0);}50%{transform:translateY(-10px);}100%{transform:translateY(0);}}
 
-/* === HOLOGRAPHIC CURSOR === */
+/* =======================================================
+   CURSOR + TOUCH GLOW
+======================================================= */
 #cursor{
-    position:fixed;width:20px;height:20px;border-radius:50%;pointer-events:none;z-index:9999;
+    position:fixed;width:18px;height:18px;border-radius:50%;pointer-events:none;
     background:radial-gradient(circle,white,rgba(255,255,255,0));
-    box-shadow:0 0 20px cyan,0 0 40px magenta,0 0 60px yellow;
-    transition:transform .05s linear;
+    box-shadow:0 0 20px cyan,0 0 35px magenta;
+    z-index:9999;transition:transform .05s linear;
+}
+@media(max-width:900px){#cursor{display:none}}
+#touchGlow{
+    position:fixed;width:90px;height:90px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(0,255,255,0.4),rgba(255,0,255,0));
+    z-index:9990;opacity:0;transition:.25s;
 }
 
-/* === 3D GALAXY CANVAS === */
+/* =======================================================
+   3D CANVAS
+======================================================= */
 #galaxy{
-    position:fixed;top:0;left:0;width:100%;height:100%;z-index:-3;
+    position:fixed;top:0;left:0;width:100%;height:100%;z-index:-10;
 }
 
-/* === PARALLAX LAYERS === */
+/* =======================================================
+   PARALLAX LAYERS
+======================================================= */
 .parallax{
-    position:fixed;top:0;left:0;width:120%;height:120%;z-index:-2;
-    background-repeat:no-repeat;background-size:cover;opacity:0.08;
+    position:fixed;top:0;left:0;width:140%;height:140%;
+    background-size:cover;opacity:0.07;z-index:-9;
 }
+@media(max-width:800px){.parallax{display:none}}
 
-/* === SKILL RINGS === */
-.skill-grid{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;margin-top:40px;}
-.skill{width:160px;height:160px;position:relative;}
-.skill canvas{width:100%;height:100%;}
-.skill-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:Orbitron;text-align:center;}
-
-/* === TILES === */
-.tile-grid{display:flex;flex-wrap:wrap;gap:30px;margin-top:40px;justify-content:center;}
+/* =======================================================
+   GRID TILES
+======================================================= */
+.grid{
+    display:flex;flex-wrap:wrap;gap:25px;justify-content:center;width:100%;
+}
 .tile{
-    width:260px;height:160px;background:rgba(255,255,255,0.08);
+    width:260px;height:150px;border-radius:15px;
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(4px);
     display:flex;justify-content:center;align-items:center;
-    border-radius:15px; font-family:Orbitron;font-size:1.1rem;
-    box-shadow:0 0 30px cyan;transition:.3s;
+    font-family:Orbitron;border:1px solid cyan;transition:.3s;
 }
-.tile:hover{transform:translateY(-10px) rotateX(6deg) rotateY(6deg);box-shadow:0 0 60px magenta;}
+.tile:hover{transform:translateY(-10px);box-shadow:0 0 35px magenta;}
+@media(max-width:600px){.tile{width:90%;height:120px;}}
 
-/* === CHART CONTAINERS === */
+/* =======================================================
+   CHART CONTAINERS
+======================================================= */
 .chart-box{
-    width:90%;max-width:950px;height:450px;background:rgba(255,255,255,0.05);
-    padding:20px;border-radius:15px;margin-bottom:40px;
-    box-shadow:0 0 30px rgba(0,255,255,0.3);
+    width:100%;max-width:900px;height:420px;
+    background:rgba(255,255,255,0.05);padding:10px;
+    border-radius:15px;margin-bottom:35px;
 }
+@media(max-width:600px){.chart-box{height:300px}}
 
-/* === TERMINAL === */
+/* =======================================================
+   TERMINAL
+======================================================= */
 #terminal{
-    width:90%;max-width:900px;height:260px;background:black;border:2px solid cyan;
-    padding:10px;overflow:auto;font-family:monospace;margin-top:40px;
-    box-shadow:0 0 20px cyan;border-radius:10px;color:#0ff;
+    width:100%;max-width:900px;height:240px;
+    background:black;color:#0ff;border:2px solid #0ff;
+    padding:10px;overflow:auto;font-family:monospace;
+    border-radius:10px;
 }
 
-/* === SECRET MODE === */
-#secret{
-    display:none;margin-top:30px;padding:20px;background:rgba(255,0,255,0.2);
-    border-radius:10px;text-align:center;
-}
-
-/* === THEME SWITCH === */
-#themeToggle{
-    position:fixed;top:20px;right:20px;background:#111;padding:10px 20px;cursor:pointer;
-    border-radius:10px;font-family:Orbitron;box-shadow:0 0 20px cyan;z-index:50;
-}
+/* Page transition */
+.fadeIn{animation:fadeIn .8s ease forwards;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- Galaxy Background -->
+<!-- NAVIGATION -->
+<nav>
+    <div class="logo">QuantumTrader</div>
+    <div id="menuBtn">☰</div>
+    <ul>
+        <li><a href="#intro">Intro</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#charts">Charts</a></li>
+        <li><a href="#systems">Systems</a></li>
+        <li><a href="#prices">Prices</a></li>
+        <li><a href="#terminalSec">Terminal</a></li>
+    </ul>
+</nav>
+
+<!-- TOUCH + CURSOR -->
+<div id="cursor"></div>
+<div id="touchGlow"></div>
+
+<!-- PARALLAX -->
+<div class="parallax" id="px1" style="background-image:url('https://i.imgur.com/6Lqv8Gt.png')"></div>
+<div class="parallax" id="px2" style="background-image:url('https://i.imgur.com/UvQuh3B.png')"></div>
+
+<!-- GALAXY CANVAS -->
 <canvas id="galaxy"></canvas>
 
-<!-- Parallax Layers -->
-<div class="parallax" id="p1" style="background-image:url('https://i.imgur.com/6Lqv8Gt.png')"></div>
-<div class="parallax" id="p2" style="background-image:url('https://i.imgur.com/UvQuh3B.png')"></div>
-
-<!-- Cursor -->
-<div id="cursor"></div>
-
-<!-- Theme Switch -->
-<div id="themeToggle">Theme</div>
-
-<!-- ===================== INTRO ===================== -->
+<!-- INTRO -->
 <section id="intro">
-<h1>🌌 Edoardo Cattabriga</h1>
-<div class="panel">
-Welcome to my **Quantum Trading Portfolio**.  
-A fusion of AI systems, algorithmic execution, neural forecasting, and 3D data architecture.
-</div>
+    <h1>Edoardo Cattabriga</h1>
+    <div class="panel">
+        Quantum-grade trading systems, AI prediction engines, and full-stack
+        market intelligence — optimized for both desktop and mobile.
+    </div>
 </section>
 
-<!-- ===================== SKILLS ===================== -->
+<!-- SKILLS -->
 <section id="skills">
-<h1>Expertise</h1>
-<div class="skill-grid">
-    <div class="skill" data-val="92" data-label="Algorithmic Trading"></div>
-    <div class="skill" data-val="89" data-label="Market Prediction"></div>
-    <div class="skill" data-val="95" data-label="HFT Engines"></div>
-    <div class="skill" data-val="84" data-label="Risk Systems "></div>
-</div>
+    <h1>Skills</h1>
+    <div class="grid">
+        <div class="tile">Quant Systems</div>
+        <div class="tile">HFT Engines</div>
+        <div class="tile">AI Forecasting</div>
+        <div class="tile">Risk Modeling</div>
+        <div class="tile">Orderflow Analysis</div>
+    </div>
 </section>
 
-<!-- ===================== TRADING CHARTS ===================== -->
+<!-- CHARTS -->
 <section id="charts">
-<h1>Trading Performance</h1>
-<div class="chart-box"><canvas id="chart1"></canvas></div>
-<div class="chart-box"><canvas id="chart2"></canvas></div>
+    <h1>Trading Charts</h1>
+    <div class="chart-box"><canvas id="chart1"></canvas></div>
+    <div class="chart-box"><canvas id="chart2"></canvas></div>
 </section>
 
-<!-- ===================== TAPE + ORDERBOOK ===================== -->
-<section id="market">
-<h1>Market Microstructure</h1>
-
-<div class="panel" style="max-width:700px;">
-<strong>Live Tick Tape</strong>
-<div id="tape" style="height:150px;overflow:auto;margin-top:10px;background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;"></div>
-
-<br><strong>Order Book Heatmap</strong>
-<canvas id="heatmap" width="700" height="200" style="margin-top:10px;border-radius:10px;"></canvas>
-</div>
+<!-- SYSTEMS -->
+<section id="systems">
+    <h1>Systems</h1>
+    <div class="grid">
+        <div class="tile">Neural Market Pulse</div>
+        <div class="tile">Risk Fusion Engine</div>
+        <div class="tile">Orderbook Heatmap AI</div>
+        <div class="tile">HFT Optimizer</div>
+        <div class="tile">Volatility Surface Engine</div>
+        <div class="tile">Strategy PnL Visualizer</div>
+    </div>
 </section>
 
-<!-- ===================== PROJECTS ===================== -->
-<section id="projects">
-<h1>Systems</h1>
-<div class="tile-grid">
-    <div class="tile">Neural Market Pulse</div>
-    <div class="tile">Risk Fusion Engine</div>
-    <div class="tile">Orderflow AI</div>
-    <div class="tile">HFT Optimizer</div>
-</div>
+<!-- REAL-TIME PRICES -->
+<section id="prices">
+    <h1>Crypto Live Prices</h1>
+    <div class="panel" id="livePrices">
+        Loading live prices…
+    </div>
 </section>
 
-<!-- ===================== TERMINAL ===================== -->
-<section>
-<h1>AI Terminal</h1>
-<div id="terminal"></div>
-<div id="secret">🎉 Secret Mode Activated!</div>
+<!-- TERMINAL -->
+<section id="terminalSec">
+    <h1>AI Terminal</h1>
+    <div id="terminal"></div>
 </section>
 
 <script>
-/* === SECTION REVEAL === */
-const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible")})})
+/* =============================================================
+   MOBILE MENU
+============================================================= */
+const menuBtn=document.getElementById("menuBtn");
+const navList=document.querySelector("nav ul");
+menuBtn.onclick=()=>navList.classList.toggle("show");
+
+/* =============================================================
+   SECTION REVEAL
+============================================================= */
+const obs=new IntersectionObserver(e=>{
+    e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible")});
+});
 document.querySelectorAll("section").forEach(s=>obs.observe(s));
 
-/* === CURSOR === */
+/* =============================================================
+   CURSOR + TOUCH
+============================================================= */
 const cursor=document.getElementById("cursor");
 document.addEventListener("mousemove",e=>{
     cursor.style.left=e.clientX+"px";
     cursor.style.top=e.clientY+"px";
-    cursor.style.transform="scale(1.6)";
-    setTimeout(()=>cursor.style.transform="scale(1)",50);
 });
+let glow=document.getElementById("touchGlow");
+document.addEventListener("touchstart",e=>{
+    let t=e.touches[0];
+    glow.style.left=t.clientX-45+"px";
+    glow.style.top=t.clientY-45+"px";
+    glow.style.opacity=1;
+});
+document.addEventListener("touchend",()=>glow.style.opacity=0);
 
-/* === PARALLAX === */
+/* =============================================================
+   PARALLAX
+============================================================= */
 document.addEventListener("mousemove",e=>{
-    let x=(e.clientX/window.innerWidth-0.5)*30;
-    let y=(e.clientY/window.innerHeight-0.5)*30;
-    p1.style.transform=`translate(${x}px,${y}px)`;
-    p2.style.transform=`translate(${-x}px,${-y}px)`;
+    if(innerWidth<800)return;
+    let x=(e.clientX/innerWidth-0.5)*20;
+    let y=(e.clientY/innerHeight-0.5)*20;
+    px1.style.transform=`translate(${x}px,${y}px)`;
+    px2.style.transform=`translate(${-x}px,${-y}px)`;
 });
 
-/* === THREE.JS GALAXY === */
-let scene=new THREE.Scene();
-let camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
-let renderer=new THREE.WebGLRenderer({canvas:document.getElementById("galaxy"),alpha:true});
+/* =============================================================
+   3D GALAXY + 3D COINS
+============================================================= */
+let canvas=document.getElementById("galaxy"),
+    scene=new THREE.Scene(),
+    cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000),
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true});
 renderer.setSize(innerWidth,innerHeight);
+cam.position.z=1;
 
-camera.position.z=1;
-
-let starsGeometry=new THREE.BufferGeometry();
-let starCount=5000;
-let positions=[];
-for(let i=0;i<starCount;i++){
-    positions.push((Math.random()-0.5)*6);
-    positions.push((Math.random()-0.5)*6);
-    positions.push((Math.random()-0.5)*6);
+/* Stars */
+let sCount=innerWidth<600?1800:5000;
+let starGeo=new THREE.BufferGeometry();
+let pos=[];
+for(let i=0;i<sCount;i++){
+    pos.push((Math.random()-0.5)*6,(Math.random()-0.5)*6,(Math.random()-0.5)*6);
 }
-starsGeometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));
-let starsMaterial=new THREE.PointsMaterial({color:0xffffff,size:0.005});
-let stars=new THREE.Points(starsGeometry,starsMaterial);
+starGeo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
+let stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:0.005}));
 scene.add(stars);
 
-function animateGalaxy(){
-    stars.rotation.y+=0.0005;
-    renderer.render(scene,camera);
-    requestAnimationFrame(animateGalaxy);
+/* Rotating Bitcoin + Ethereum spheres */
+function makeCoin(color){
+    let g=new THREE.SphereGeometry(0.15,32,32);
+    let m=new THREE.MeshStandardMaterial({color,emissive:color});
+    let mesh=new THREE.Mesh(g,m);
+    return mesh;
 }
-animateGalaxy();
+let btc=makeCoin(0xffa500);
+let eth=makeCoin(0x55aaff);
+btc.position.x=-0.6; eth.position.x=0.6;
+scene.add(btc);scene.add(eth);
+
+let light=new THREE.PointLight(0xffffff,1);
+light.position.set(3,3,3);
+scene.add(light);
+
+function render3D(){
+    stars.rotation.y+=0.0006;
+    btc.rotation.y+=0.01;
+    eth.rotation.y-=0.01;
+    renderer.render(scene,cam);
+    requestAnimationFrame(render3D);
+}
+render3D();
 
 addEventListener("resize",()=>{
-    camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+    cam.aspect=innerWidth/innerHeight;
+    cam.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);
-})
-
-/* === SKILL RINGS === */
-document.querySelectorAll(".skill").forEach(el=>{
-    let v=parseInt(el.dataset.val);
-    let lbl=el.dataset.label;
-    let c=document.createElement("canvas");
-    c.width=c.height=160;
-    el.appendChild(c);
-    let ctx=c.getContext("2d");
-    let t=0;
-    function draw(){
-        ctx.clearRect(0,0,160,160);
-        ctx.lineWidth=10;
-        ctx.strokeStyle="rgba(255,255,255,0.1)";
-        ctx.beginPath();ctx.arc(80,80,60,0,Math.PI*2);ctx.stroke();
-        ctx.strokeStyle="cyan";
-        ctx.beginPath();ctx.arc(80,80,60,-Math.PI/2,(-Math.PI/2)+Math.PI*2*(t/100));ctx.stroke();
-        if(t<v){t++;requestAnimationFrame(draw);}
-    }
-    draw();
-    let d=document.createElement("div");
-    d.className="skill-label";d.innerHTML=lbl+"<br>"+v+"%";
-    el.appendChild(d);
 });
 
-/* === CHARTS === */
+/* =============================================================
+   CHARTS
+============================================================= */
 new Chart(chart1,{
     type:"line",
-    data:{labels:[...Array(40).keys()].map(x=>"T"+x),
-    datasets:[{label:"Portfolio Value",data:[...Array(40)].map(()=>1500+Math.random()*800),
-        borderColor:"cyan",backgroundColor:"rgba(0,255,255,0.1)",fill:true,tension:.4}]},
-    options:{scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}},plugins:{legend:{labels:{color:"white"}}}}
+    data:{
+        labels:[...Array(60).keys()],
+        datasets:[{label:"Portfolio Value",data:[...Array(60)].map(()=>1500+Math.random()*500),borderColor:"cyan",backgroundColor:"rgba(0,255,255,0.15)",fill:true,tension:.3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
 });
+
 new Chart(chart2,{
     type:"line",
-    data:{labels:[...Array(40).keys()].map(x=>"T"+x),
-    datasets:[{label:"Drawdown",data:[...Array(40)].map(()=>-Math.random()*200),
-        borderColor:"magenta",backgroundColor:"rgba(255,0,255,0.2)",fill:true,tension:.4}]},
-    options:{scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}},plugins:{legend:{labels:{color:"white"}}}}
+    data:{
+        labels:[...Array(60).keys()],
+        datasets:[{label:"Drawdown",data:[...Array(60)].map(()=>-(Math.random()*300)),borderColor:"magenta",backgroundColor:"rgba(255,0,255,0.15)",fill:true,tension:.35}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
 });
 
-/* === TICK TAPE === */
-let tape=document.getElementById("tape");
-setInterval(()=>{
-    let p=(Math.random()*100+100).toFixed(2);
-    let e=document.createElement("div");
-    e.textContent="Trade @ "+p;
-    tape.appendChild(e);
-    tape.scrollTop=tape.scrollHeight;
-},400);
+/* =============================================================
+   REAL-TIME CRYPTO PRICES (BINANCE)
+============================================================= */
+let priceBox=document.getElementById("livePrices");
+let ws=new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+ws.onmessage=e=>{
+    let data=JSON.parse(e.data);
 
-/* === ORDERBOOK HEATMAP === */
-let h=document.getElementById("heatmap").getContext("2d");
-function drawHeat(){
-    let w=h.canvas.width,hh=h.canvas.height;
-    let grd=h.createLinearGradient(0,0,w,0);
-    grd.addColorStop(0,"red");grd.addColorStop(.5,"yellow");grd.addColorStop(1,"cyan");
-    for(let i=0;i<50;i++){
-        h.fillStyle=grd;
-        let x=i*(w/50);
-        let depth=Math.random()*(hh-20)+20;
-        h.fillRect(x,hh-depth, w/50, depth);
+    let wanted=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","ADAUSDT"];
+
+    let out="";
+    for(let x of data){
+        if(wanted.includes(x.s)){
+            out+=`<div style="margin:8px 0;font-family:Orbitron">
+                <b>${x.s}</b> — ${parseFloat(x.c).toFixed(2)}
+            </div>`;
+        }
     }
-}
-setInterval(drawHeat,500);
-
-/* === TERMINAL === */
-let term=document.getElementById("terminal");
-function log(t){
-    let d=document.createElement("div");d.textContent=t;term.appendChild(d);
-    term.scrollTop=term.scrollHeight;
-}
-let logs=[
-"> Loading neural models...",
-"> Connecting to exchanges...",
-"> Latency: 1.8ms",
-"> Strategy: RAINBOW-SINGULARITY",
-"> Detecting market clusters...",
-"> Arbitrage route found...",
-"> Executing..."
-];
-let li=0;setInterval(()=>{log(logs[li%logs.length]);li++;},700);
-
-/* === THEME TOGGLE === */
-document.getElementById("themeToggle").onclick=()=>{
-    if(document.body.style.background=="white"){
-        document.body.style.background="black";document.body.style.color="white";
-    }else{
-        document.body.style.background="white";document.body.style.color="black";
-    }
+    priceBox.innerHTML=out;
 };
 
-/* === KONAMI MODE === */
-let k=[];
-addEventListener("keydown",e=>{
-    k.push(e.key);
-    if(k.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba"))
-        secret.style.display="block";
-});
+/* =============================================================
+   TERMINAL LOG
+============================================================= */
+let term=document.getElementById("terminal");
+function log(t){term.innerHTML+=t+"<br>";term.scrollTop=term.scrollHeight;}
+let msgs=[
+    "> Initializing trading engine...",
+    "> Connecting to Binance feeds...",
+    "> Latency: 1.2ms",
+    "> AI prediction engine: ACTIVE",
+    "> Monitoring volatility clusters..."
+];
+let i=0;
+setInterval(()=>{log(msgs[i%msgs.length]);i++;},900);
+
 </script>
 </body>
 </html>
