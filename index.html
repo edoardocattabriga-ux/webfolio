@@ -2,188 +2,623 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Edoardo Cattabriga — Trading Portfolio</title>
+<title>Edoardo Cattabriga — Quantum Trading Portfolio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
 <style>
-/* ===== GLOBAL RESET ===== */
+/* =======================================================================
+   GLOBAL STYLES + RESET
+======================================================================= */
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; font-family:Arial, sans-serif; background:#000; color:white; scroll-behavior:smooth; }
-
-/* ===== FULLSCREEN CANVAS FOR RAINBOW ===== */
-#rainbowCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
-
-/* ===== CINEMATIC INTRO ===== */
-#intro {
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    display:flex; justify-content:center; align-items:center; flex-direction:column;
-    background:black; z-index:1000; animation:fadeOutIntro 6s forwards ease-in-out;
-}
-@keyframes fadeOutIntro { 0%{opacity:1;} 80%{opacity:1;} 100%{opacity:0; visibility:hidden;} }
-
-.intro-text {
-    font-size:3rem; font-weight:bold; text-align:center;
-    color:white; text-shadow:0 0 20px white;
-    animation:glitchIn 3s forwards ease;
-}
-#intro2 { animation-delay:3s; }
-@keyframes glitchIn {
-    0% { opacity:0; transform:scale(0.9); filter:blur(10px); }
-    20% { opacity:1; transform:scale(1); filter:blur(0); }
-    30% { transform:translateX(-5px); }
-    32% { transform:translateX(5px); }
-    34% { transform:translateX(0); }
-    100% { opacity:1; }
+html, body {
+    width:100%;
+    min-height:100%;
+    font-family:'Montserrat', sans-serif;
+    background:black;
+    color:white;
+    overflow-x:hidden;
 }
 
-/* ===== SECTIONS ===== */
-section {
-    width:100%; min-height:100vh; display:flex; flex-direction:column;
-    justify-content:center; align-items:center; padding:50px 20px; text-align:center;
+/* Smooth fade transitions */
+section { opacity:0; transform:translateY(50px); transition:1.2s ease; }
+section.visible { opacity:1; transform:translateY(0); }
+
+/* =======================================================================
+   BACKGROUND PARTICLES + HOLOGRAPHIC RAINBOW
+======================================================================= */
+#particleCanvas,
+#rainbowCanvas {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:-3;
 }
 
-/* ===== NEON PANELS ===== */
-.neon-panel {
-    background:rgba(255,255,255,0.05); border-radius:10px; padding:20px; margin:20px 0;
-    backdrop-filter:blur(8px); box-shadow:0 0 20px rgba(255,255,255,0.3);
-    animation:float 6s infinite ease-in-out;
-}
-@keyframes float { 0%{transform:translateY(0);}50%{transform:translateY(-10px);}100%{transform:translateY(0);} }
+#rainbowCanvas { z-index:-2; mix-blend-mode:screen; }
 
-/* ===== SKILLS BARS ===== */
-.skill-bar { width:80%; max-width:700px; height:20px; background:rgba(255,255,255,0.05); border-radius:10px; margin:15px 0; }
-.skill-bar-inner { height:100%; width:0%; border-radius:10px; background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet); transition:width 2s ease; }
-
-/* ===== TRADING CHARTS ===== */
-.chart-container { width:80%; max-width:900px; height:400px; margin:20px auto; background:rgba(255,255,255,0.05); border-radius:15px; padding:15px; box-shadow:0 0 20px rgba(255,255,255,0.3); }
-
-/* ===== OTHER COOL THINGS ===== */
-.cool-container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-top:30px; }
-.cool-tile { width:250px; height:150px; background:rgba(255,255,255,0.05); border-radius:15px; display:flex; justify-content:center; align-items:center; font-weight:bold; color:white; box-shadow:0 0 20px rgba(255,255,255,0.3); transition:transform 0.3s, box-shadow 0.3s; }
-.cool-tile:hover { transform:translateY(-10px) rotateX(5deg) rotateY(5deg); box-shadow:0 0 40px rgba(255,0,255,1),0 0 60px rgba(0,255,255,1); }
-
-/* ===== CURSOR ===== */
+/* =======================================================================
+   3D HOLOGRAPHIC CURSOR
+======================================================================= */
 #cursor {
-    position:fixed; width:18px; height:18px; border-radius:50%; pointer-events:none; z-index:1001;
+    position:fixed;
+    width:20px; height:20px;
+    border-radius:50%;
     background:radial-gradient(circle, white, rgba(255,255,255,0));
-    box-shadow:0 0 20px rgba(255,0,255,1),0 0 40px rgba(0,255,255,1),0 0 60px rgba(255,255,0,1);
-    mix-blend-mode:screen; transition:transform 0.08s linear;
+    pointer-events:none;
+    z-index:9999;
+    filter: brightness(2);
+    box-shadow:
+        0 0 20px cyan,
+        0 0 40px magenta,
+        0 0 60px yellow;
+    transition:transform 0.06s linear;
+}
+
+/* =======================================================================
+   CINEMATIC INTRO SEQUENCE
+======================================================================= */
+#intro {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:black;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:2000;
+    animation:fadeIntro 9s forwards ease-in-out;
+}
+@keyframes fadeIntro {
+    0%{opacity:1;}
+    90%{opacity:1;}
+    100%{opacity:0; visibility:hidden;}
+}
+
+.intro-big {
+    font-size:4rem;
+    font-family:'Orbitron';
+    margin-bottom:20px;
+    text-shadow:0 0 20px white, 0 0 40px cyan;
+    animation:glitch 3s ease forwards;
+}
+.intro-small {
+    font-size:1.5rem;
+    opacity:0;
+    animation:fadeIn 3s ease forwards 2.5s;
+    color:#ccc;
+    letter-spacing:2px;
+}
+@keyframes fadeIn { to{opacity:1;} }
+@keyframes glitch {
+    0%{opacity:0; filter:blur(10px); transform:scale(0.8);}
+    20%{opacity:1; filter:none; transform:scale(1);}
+    50%{transform:translateX(-5px);}
+    52%{transform:translateX(5px);}
+    54%{transform:translateX(0);}
+}
+
+/* =======================================================================
+   SECTION STYLE
+======================================================================= */
+section {
+    min-height:100vh;
+    padding:120px 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+h1 {
+    font-family:'Orbitron';
+    font-size:3rem;
+    margin-bottom:30px;
+    text-shadow:0 0 20px cyan;
+}
+
+/* =======================================================================
+   HOLOGRAPHIC PANELS
+======================================================================= */
+.panel {
+    background:rgba(255,255,255,0.05);
+    padding:30px;
+    max-width:900px;
+    border-radius:18px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 0 30px rgba(255,255,255,0.2);
+    animation:float 6s infinite ease-in-out;
+    font-size:1.2rem;
+    line-height:1.7em;
+}
+@keyframes float {
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+    100%{transform:translateY(0);}
+}
+
+/* =======================================================================
+   PARALLAX LAYERS
+======================================================================= */
+.parallax-layer {
+    position:fixed;
+    width:150%;
+    height:150%;
+    top:-25%; left:-25%;
+    pointer-events:none;
+    background-repeat:no-repeat;
+    background-size:cover;
+    opacity:0.05;
+    z-index:-1;
+}
+
+/* =======================================================================
+   SKILL RINGS (Neon Circular Progress Bars)
+======================================================================= */
+.skill-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:40px; margin-top:40px; }
+
+.skill-ring {
+    width:170px; height:170px;
+    position:relative;
+}
+.skill-ring canvas {
+    width:100%; height:100%;
+}
+.skill-label {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%, -50%);
+    font-family:'Orbitron';
+    font-size:1rem;
+    text-align:center;
+}
+
+/* =======================================================================
+   3D TILES (MAGNETIC CARDS)
+======================================================================= */
+.tile-grid {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:30px;
+    margin-top:40px;
+}
+.tile {
+    width:260px;
+    height:160px;
+    background:rgba(255,255,255,0.07);
+    border-radius:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Orbitron';
+    font-weight:bold;
+    transition:transform 0.3s, box-shadow 0.3s;
+    box-shadow:0 0 30px rgba(0,255,255,0.3);
+}
+.tile:hover {
+    transform:translateY(-12px) rotateX(8deg) rotateY(8deg);
+    box-shadow:0 0 60px cyan, 0 0 90px magenta;
+}
+
+/* =======================================================================
+   TIMELINE
+======================================================================= */
+.timeline {
+    width:90%;
+    max-width:900px;
+    margin-top:60px;
+    border-left:3px solid cyan;
+    padding-left:30px;
+}
+.timeline-item {
+    margin:30px 0;
+    position:relative;
+}
+.timeline-item::before {
+    content:'';
+    position:absolute;
+    width:18px; height:18px;
+    background:cyan;
+    border-radius:50%;
+    left:-40px; top:0;
+    box-shadow:0 0 20px cyan;
+}
+.timeline-title { font-family:'Orbitron'; font-size:1.3rem; margin-bottom:10px; color:cyan; }
+.timeline-desc { color:#ccc; line-height:1.6em; }
+
+/* =======================================================================
+   CHART CONTAINERS
+======================================================================= */
+.chart-container {
+    width:90%;
+    max-width:950px;
+    height:450px;
+    margin:30px auto;
+    background:rgba(255,255,255,0.05);
+    border-radius:20px;
+    padding:25px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 0 40px rgba(255,255,255,0.2);
+}
+
+/* =======================================================================
+   TERMINAL CONSOLE
+======================================================================= */
+#terminal {
+    width:90%; max-width:900px;
+    background:black;
+    border:2px solid cyan;
+    padding:20px;
+    margin-top:40px;
+    border-radius:10px;
+    font-family:monospace;
+    height:250px;
+    overflow:auto;
+    color:#00ffea;
+    box-shadow:0 0 30px cyan;
+}
+
+/* =======================================================================
+   DAY-NIGHT SWITCH
+======================================================================= */
+#themeSwitch {
+    position:fixed;
+    top:20px; right:20px;
+    background:#111;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-family:'Orbitron';
+    box-shadow:0 0 20px cyan;
+    transition:0.3s;
+}
+#themeSwitch:hover { background:#222; }
+
+/* =======================================================================
+   KONAMI CODE UNLOCK (Secret Mode)
+======================================================================= */
+#secret {
+    display:none;
+    margin-top:40px;
+    padding:20px;
+    background:rgba(255,0,255,0.15);
+    border-radius:15px;
+    backdrop-filter:blur(6px);
+    box-shadow:0 0 40px magenta;
 }
 </style>
 </head>
 <body>
 
-<!-- CINEMATIC INTRO -->
+<!-- ===============================================================
+     INTRO
+=============================================================== -->
 <div id="intro">
-    <div class="intro-text" id="intro1">🌈 Rainbow Singularity</div>
-    <div class="intro-text" id="intro2">Edoardo Cattabriga — Quantum Trader</div>
+    <div class="intro-big">🌈 RAINBOW SINGULARITY</div>
+    <div class="intro-small">Edoardo Cattabriga — Quantum Trader</div>
 </div>
 
-<!-- RAINBOW CANVAS -->
+<!-- ===============================================================
+     CURSOR + BACKGROUNDS
+=============================================================== -->
+<div id="cursor"></div>
+<canvas id="particleCanvas"></canvas>
 <canvas id="rainbowCanvas"></canvas>
 
-<!-- CURSOR -->
-<div id="cursor"></div>
+<!-- PARALLAX LAYERS -->
+<div class="parallax-layer" id="p1" style="background-image:url('https://i.imgur.com/6Lqv8Gt.png');"></div>
+<div class="parallax-layer" id="p2" style="background-image:url('https://i.imgur.com/UvQuh3B.png');"></div>
 
-<!-- ABOUT ME SECTION -->
+<!-- ===============================================================
+     DAY/NIGHT SWITCH
+=============================================================== -->
+<div id="themeSwitch">Toggle Mode</div>
+
+<!-- ===============================================================
+     ABOUT
+=============================================================== -->
 <section id="about">
     <h1>About Me</h1>
-    <div class="neon-panel">
-        I'm <strong>Edoardo Cattabriga</strong>, a trader with 10 years of experience in algorithmic trading, crypto markets, and risk management. I specialize in **high-frequency trading**, **market prediction algorithms**, and **quantitative strategies**.
+    <div class="panel">
+        I am <strong>Edoardo Cattabriga</strong>, a quantitative and algorithmic trader with a decade of experience across crypto, HFT, predictive modeling, volatility engineering, 
+        and risk optimization.  
+        <br><br>
+        My strategies combine **deep learning**, **Monte-Carlo forecasting**, **liquidity routing**, and **latency-sensitive execution systems**.  
+        <br><br>
+        I specialize in turning chaos into precision.
+    </div>
+
+    <div class="skill-grid">
+        <div class="skill-ring" data-skill="92" data-label="Algorithmic Trading"></div>
+        <div class="skill-ring" data-skill="87" data-label="Prediction Models"></div>
+        <div class="skill-ring" data-skill="95" data-label="HFT Engines"></div>
+        <div class="skill-ring" data-skill="82" data-label="Risk Systems"></div>
+        <div class="skill-ring" data-skill="78" data-label="Crypto Microstructure"></div>
     </div>
 </section>
 
-<!-- TRADING GRAPHS -->
+<!-- ===============================================================
+     TRADING GRAPHS
+=============================================================== -->
 <section id="graphs">
-    <h1>Trading Graphs</h1>
-    <div class="chart-container">
-        <canvas id="lineChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <canvas id="candleChart"></canvas>
+    <h1>Trading Performance</h1>
+    <div class="chart-container"><canvas id="lineChart"></canvas></div>
+    <div class="chart-container"><canvas id="candleChart"></canvas></div>
+</section>
+
+<!-- ===============================================================
+     TIMELINE
+=============================================================== -->
+<section id="timeline">
+    <h1>Experience Timeline</h1>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-title">2024 — Quantum Strategy Lead</div>
+            <div class="timeline-desc">Created multi-agent reinforcement learning portfolio optimizer.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">2022 — HFT Developer</div>
+            <div class="timeline-desc">Designed microsecond-latency arbitrage systems across crypto venues.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">2018 — Market Data Architect</div>
+            <div class="timeline-desc">Built ultra-high-fidelity tick data pipelines.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-title">2015 — Algorithmic Trader</div>
+            <div class="timeline-desc">Developed early prediction models using LSTM networks.</div>
+        </div>
     </div>
 </section>
 
-<!-- OTHER COOL THINGS -->
+<!-- ===============================================================
+     COOL PROJECTS
+=============================================================== -->
 <section id="cool">
     <h1>Other Cool Things</h1>
-    <div class="cool-container">
-        <div class="cool-tile">Neural Market Pulse</div>
-        <div class="cool-tile">Rainbow Risk Gauge</div>
-        <div class="cool-tile">Crypto Volatility Map</div>
-        <div class="cool-tile">Trading Bot Dashboard</div>
+    <div class="tile-grid">
+        <div class="tile">Neural Market Pulse</div>
+        <div class="tile">Rainbow Risk Gauge</div>
+        <div class="tile">Crypto Volatility Map</div>
+        <div class="tile">HFT Bot Dashboard</div>
+        <div class="tile">Latency Heatmap AI</div>
+        <div class="tile">Orderflow Neural Network</div>
     </div>
 </section>
 
+<!-- ===============================================================
+     TERMINAL (AI Console)
+=============================================================== -->
+<section id="console">
+    <h1>AI Trading Console</h1>
+    <div id="terminal"></div>
+</section>
+
+<!-- SECRET MODE -->
+<div id="secret">🎉 Secret Mode Unlocked! You discovered the Konami Code.</div>
+
+<!-- ===============================================================
+     JS SCRIPTS
+=============================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-/* ===== CURSOR ===== */
+/* ======================================================================
+   SECTION FADE-IN ON SCROLL
+====================================================================== */
+const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("visible"); });
+});
+document.querySelectorAll("section").forEach(s=>observer.observe(s));
+
+/* ======================================================================
+   CURSOR
+====================================================================== */
 const cursor = document.getElementById("cursor");
-document.addEventListener("mousemove", e => {
+document.addEventListener("mousemove", e=>{
     cursor.style.left = e.clientX + "px";
     cursor.style.top = e.clientY + "px";
-    cursor.style.transform = "scale(1.5)";
-    setTimeout(()=>cursor.style.transform="scale(1)",50);
+    cursor.style.transform = "scale(1.8)";
+    setTimeout(()=>cursor.style.transform="scale(1)",60);
 });
 
-/* ===== RAINBOW CANVAS ===== */
-const canvas = document.getElementById('rainbowCanvas');
-const ctx = canvas.getContext('2d');
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resize(); window.onresize=resize;
+/* ======================================================================
+   PARALLAX LAYERS
+====================================================================== */
+document.addEventListener("mousemove", e=>{
+    const x = (e.clientX / window.innerWidth - 0.5) * 30;
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    document.getElementById("p1").style.transform = `translate(${x}px, ${y}px)`;
+    document.getElementById("p2").style.transform = `translate(${-x}px, ${-y}px)`;
+});
 
+/* ======================================================================
+   PARTICLE BACKGROUND
+====================================================================== */
+const pCanvas = document.getElementById("particleCanvas");
+const pCtx = pCanvas.getContext("2d");
+function resize() {
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let particles = [];
+for(let i=0;i<150;i++){
+    particles.push({
+        x:Math.random()*pCanvas.width,
+        y:Math.random()*pCanvas.height,
+        s:Math.random()*2+1,
+        vx:(Math.random()-0.5)*0.4,
+        vy:(Math.random()-0.5)*0.4
+    });
+}
+function particlesDraw(){
+    pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+    particles.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0||p.x>pCanvas.width) p.vx*=-1;
+        if(p.y<0||p.y>pCanvas.height) p.vy*=-1;
+        pCtx.fillStyle="white";
+        pCtx.fillRect(p.x,p.y,p.s,p.s);
+    });
+    requestAnimationFrame(particlesDraw);
+}
+particlesDraw();
+
+/* ======================================================================
+   RAINBOW CANVAS
+====================================================================== */
+const rCanvas = document.getElementById("rainbowCanvas");
+const rCtx = rCanvas.getContext("2d");
+function rresize(){ rCanvas.width=innerWidth; rCanvas.height=innerHeight; }
+rresize(); window.addEventListener("resize", rresize);
 let t=0;
-function rainbow() {
+function rainbow(){
     t+=0.01;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    let gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-    gradient.addColorStop(0, `hsl(${(t*100)%360}, 100%, 50%)`);
-    gradient.addColorStop(0.5, `hsl(${(t*100+120)%360}, 100%, 50%)`);
-    gradient.addColorStop(1, `hsl(${(t*100+240)%360}, 100%, 50%)`);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+    let g = rCtx.createLinearGradient(0,0,rCanvas.width,rCanvas.height);
+    g.addColorStop(0,`hsl(${(t*100)%360},100%,50%)`);
+    g.addColorStop(0.5,`hsl(${(t*100+120)%360},100%,50%)`);
+    g.addColorStop(1,`hsl(${(t*100+240)%360},100%,50%)`);
+    rCtx.fillStyle=g;
+    rCtx.fillRect(0,0,rCanvas.width,rCanvas.height);
     requestAnimationFrame(rainbow);
 }
 rainbow();
 
-/* ===== SKILLS ANIMATION ===== */
-window.addEventListener("load", ()=>{
-    document.querySelectorAll(".skill-bar-inner").forEach(el=>{
-        el.style.width = el.getAttribute("data-skill") || "80%";
-    });
+/* ======================================================================
+   SKILL RINGS
+====================================================================== */
+document.querySelectorAll(".skill-ring").forEach(el=>{
+    const val = el.dataset.skill;
+    const label = el.dataset.label;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.height = 170;
+    el.appendChild(canvas);
+
+    const lbl = document.createElement("div");
+    lbl.className="skill-label";
+    lbl.innerHTML = label + "<br>" + val + "%";
+    el.appendChild(lbl);
+
+    let p=0;
+
+    function animate(){
+        ctx.clearRect(0,0,170,170);
+        ctx.lineWidth=10;
+        ctx.strokeStyle="rgba(255,255,255,0.1)";
+        ctx.beginPath();
+        ctx.arc(85,85,60,0,Math.PI*2);
+        ctx.stroke();
+
+        ctx.strokeStyle="cyan";
+        ctx.shadowColor="cyan";
+        ctx.shadowBlur=20;
+        ctx.beginPath();
+        ctx.arc(85,85,60,-Math.PI/2,(-Math.PI/2)+(Math.PI*2*(p/100)));
+        ctx.stroke();
+
+        if(p<val){ p+=1; requestAnimationFrame(animate); }
+    }
+    animate();
 });
 
-/* ===== TRADING GRAPHS ===== */
-const lineCtx = document.getElementById('lineChart').getContext('2d');
-new Chart(lineCtx, {
-    type: 'line',
-    data: {
-        labels: Array.from({length:20},(_,i)=>`T${i+1}`),
-        datasets: [{
-            label: 'Portfolio Value',
-            data: Array.from({length:20},()=>Math.floor(Math.random()*1000+1000)),
-            borderColor: 'rgba(0,255,255,1)',
-            backgroundColor:'rgba(0,255,255,0.2)',
+/* ======================================================================
+   CHARTS
+====================================================================== */
+new Chart(document.getElementById("lineChart"), {
+    type:"line",
+    data:{
+        labels:Array.from({length:30},(_,i)=>"T"+(i+1)),
+        datasets:[{
+            label:"Portfolio Value",
+            data:Array.from({length:30},()=>1800+Math.random()*600),
+            borderColor:"cyan",
+            backgroundColor:"rgba(0,255,255,0.1)",
             fill:true,
-            tension:0.3
+            tension:0.4
         }]
     },
-    options: { responsive:true, plugins:{legend:{labels:{color:'white'}}}, scales:{x:{ticks:{color:'white'}}, y:{ticks:{color:'white'}}} }
+    options:{
+        plugins:{ legend:{labels:{color:"white"}} },
+        scales:{ x:{ticks:{color:"white"}}, y:{ticks:{color:"white"}} }
+    }
 });
 
-const candleCtx = document.getElementById('candleChart').getContext('2d');
-new Chart(candleCtx, {
-    type: 'bar',
-    data: {
-        labels: Array.from({length:20},(_,i)=>`T${i+1}`),
-        datasets: [{
-            label: 'Price Movement',
-            data: Array.from({length:20},()=>Math.floor(Math.random()*50+100)),
-            backgroundColor: 'rgba(255,0,255,0.6)',
-            borderColor:'rgba(255,255,255,0.8)',
-            borderWidth:1
+new Chart(document.getElementById("candleChart"), {
+    type:"bar",
+    data:{
+        labels:Array.from({length:20},(_,i)=>"T"+(i+1)),
+        datasets:[{
+            label:"Price Movement",
+            data:Array.from({length:20},()=>80+Math.random()*40),
+            backgroundColor:"rgba(255,0,255,0.6)",
+            borderColor:"white"
         }]
     },
-    options: { responsive:true, plugins:{legend:{labels:{color:'white'}}}, scales:{x:{ticks:{color:'white'}}, y:{ticks:{color:'white'}}} }
+    options:{
+        plugins:{ legend:{labels:{color:"white"}} },
+        scales:{ x:{ticks:{color:"white"}}, y:{ticks:{color:"white"}} }
+    }
+});
+
+/* ======================================================================
+   TERMINAL TYPE EFFECT
+====================================================================== */
+const terminal = document.getElementById("terminal");
+const lines = [
+    "> Initializing trading engine...",
+    "> Connecting to exchanges...",
+    "> Latency: 2.1ms",
+    "> Loading deep-learning prediction model...",
+    "> Status: ONLINE",
+    "> Executing live strategy: RAINBOW-SINGULARITY-V3",
+    "> Monitoring volatility clusters...",
+    "> Arbitrage pathways detected...",
+];
+let li=0;
+function typeLine(){
+    if(li<lines.length){
+        const div=document.createElement("div");
+        div.textContent=lines[li];
+        terminal.appendChild(div);
+        terminal.scrollTop = terminal.scrollHeight;
+        li++;
+        setTimeout(typeLine, 700);
+    }
+}
+typeLine();
+
+/* ======================================================================
+   DAY/NIGHT MODE SWITCH
+====================================================================== */
+let dark=true;
+document.getElementById("themeSwitch").onclick = ()=>{
+    dark=!dark;
+    if(dark){
+        document.body.style.background="black";
+        document.body.style.color="white";
+    } else {
+        document.body.style.background="white";
+        document.body.style.color="black";
+    }
+};
+
+/* ======================================================================
+   KONAMI CODE SECRET UNLOCK
+====================================================================== */
+let konami = [];
+const secret = document.getElementById("secret");
+document.addEventListener("keydown", e=>{
+    konami.push(e.key);
+    if(konami.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba")){
+        secret.style.display="block";
+    }
 });
 </script>
 </body>
