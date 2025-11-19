@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edoardo – Professional Trader Portfolio</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        background: #0d0f13;
+        color: #f1f1f1;
+        overflow-x: hidden;
+    }
+
+    /* Smooth fade-in animation */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(15px);
+        animation: fadeIn 1.2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header */
+    header {
+        padding: 60px;
+        text-align: center;
+        background: linear-gradient(135deg, #0d0f13, #1c212c);
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        text-shadow: 0 0 10px #00ffc8;
+    }
+
+    h2 {
+        color: #00ffc8;
+        font-weight: 400;
+        margin-top: -10px;
+    }
+
+    /* Animated neon line */
+    .neon-line {
+        width: 180px;
+        height: 4px;
+        margin: 20px auto;
+        background: #00ffc8;
+        box-shadow: 0 0 10px #00ffc8, 0 0 20px #00ffc8;
+        animation: glow 2.5s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { box-shadow: 0 0 5px #00ffc8; }
+        to   { box-shadow: 0 0 20px #00ffc8, 0 0 40px #00ffc8; }
+    }
+
+    /* Section Styling */
+    section {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 20px;
+        animation-delay: .3s;
+    }
+
+    /* Experience cards */
+    .card {
+        background: #14181f;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #1f242e;
+        transition: transform .3s, box-shadow .3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px #00ffc82c;
+    }
+
+    /* Stats counters */
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 40px;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00ffc8;
+        text-shadow: 0 0 15px #00ffc8;
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
+        padding: 40px;
+        margin-top: 80px;
+        color: #888;
+        border-top: 1px solid #222;
+    }
+</style>
+</head>
+
+<body>
+
+<header class="fade-in">
+    <h1>Edoardo</h1>
+    <h2>Professional Trader • 10 Years Experience</h2>
+    <div class="neon-line"></div>
+</header>
+
+<section class="fade-in">
+    <h2>About Me</h2>
+    <p>
+        I'm Edoardo, a disciplined trader with a decade of fictional experience in forex, crypto, 
+        and equities. I specialize in market psychology, momentum strategies, and automated systems.
+        My passion is transforming market data into consistent, strategic decisions.
+    </p>
+</section>
+
+<section class="fade-in">
+    <h2>Areas of Expertise</h2>
+
+    <div class="card">
+        <h3>📈 Technical Analysis</h3>
+        <p>Chart patterns, Fibonacci levels, confluences, and price action mastery.</p>
+    </div>
+
+    <div class="card">
+        <h3>🤖 Algorithmic Trading</h3>
+        <p>Designing and optimizing fully automated EA systems and quantitative models.</p>
+    </div>
+
+    <div class="card">
+        <h3>💹 Risk Management</h3>
+        <p>Advanced portfolio hedging, volatility control, and disciplined execution.</p>
+    </div>
+</section>
+
+<section class="fade-in">
+    <h2>Performance Stats</h2>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number" data-target="10">0</div>
+            <p>Years Trading</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" data-target="325">0</div>
+            <p>Profitable Trades</p>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" data-target="87">0</div>
+            <p>Success Rate (%)</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2025 Edoardo — All Rights Reserved
+</footer>
+
+<script>
+    // Dynamic Counter Animation
+    const counters = document.querySelectorAll('.stat-number');
+    counters.forEach(counter => {
+        const update = () => {
+            const target = +counter.getAttribute('data-target');
+            const current = +counter.innerText;
+            const increment = target / 150;
+
+            if (current < target) {
+                counter.innerText = Math.ceil(current + increment);
+                requestAnimationFrame(update);
+            } else {
+                counter.innerText = target;
+            }
+        };
+        update();
+    });
+</script>
+
+</body>
+</html>
