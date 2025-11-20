@@ -289,37 +289,6 @@ starGeo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
 let stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:0.005}));
 scene.add(stars);
 
-/* Rotating Bitcoin + Ethereum spheres */
-function makeCoin(color){
-    let g=new THREE.SphereGeometry(0.15,32,32);
-    let m=new THREE.MeshStandardMaterial({color,emissive:color});
-    let mesh=new THREE.Mesh(g,m);
-    return mesh;
-}
-let btc=makeCoin(0xffa500);
-let eth=makeCoin(0x55aaff);
-btc.position.x=-0.6; eth.position.x=0.6;
-scene.add(btc);scene.add(eth);
-
-let light=new THREE.PointLight(0xffffff,1);
-light.position.set(3,3,3);
-scene.add(light);
-
-function render3D(){
-    stars.rotation.y+=0.0006;
-    btc.rotation.y+=0.01;
-    eth.rotation.y-=0.01;
-    renderer.render(scene,cam);
-    requestAnimationFrame(render3D);
-}
-render3D();
-
-addEventListener("resize",()=>{
-    cam.aspect=innerWidth/innerHeight;
-    cam.updateProjectionMatrix();
-    renderer.setSize(innerWidth,innerHeight);
-});
-
 /* =============================================================
    CHARTS
 ============================================================= */
