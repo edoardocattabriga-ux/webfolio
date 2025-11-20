@@ -25,9 +25,6 @@ body{
 html{font-size:16px}
 @media(max-width:700px){html{font-size:14px}}
 
-/* =======================================================
-   NAVIGATION BAR + MOBILE MENU
-======================================================= */
 nav{
     position:fixed;top:0;left:0;width:100%;
     display:flex;justify-content:space-between;align-items:center;
@@ -60,6 +57,7 @@ section{
     opacity:0;transform:translateY(40px);transition:1s;
 }
 section.visible{opacity:1;transform:translateY(0);}
+
 h1{
     font-family:Orbitron;font-size:3rem;text-shadow:0 0 15px cyan;
 }
@@ -84,6 +82,7 @@ h1{
     z-index:9999;transition:transform .05s linear;
 }
 @media(max-width:900px){#cursor{display:none}}
+
 #touchGlow{
     position:fixed;width:90px;height:90px;border-radius:50%;pointer-events:none;
     background:radial-gradient(circle,rgba(0,255,255,0.4),rgba(255,0,255,0));
@@ -96,15 +95,6 @@ h1{
 #galaxy{
     position:fixed;top:0;left:0;width:100%;height:100%;z-index:-10;
 }
-
-/* =======================================================
-   PARALLAX LAYERS
-======================================================= */
-.parallax{
-    position:fixed;top:0;left:0;width:140%;height:140%;
-    background-size:cover;opacity:0.07;z-index:-9;
-}
-@media(max-width:800px){.parallax{display:none}}
 
 /* =======================================================
    GRID TILES
@@ -141,14 +131,12 @@ h1{
     border-radius:10px;
 }
 
-/* Page transition */
 .fadeIn{animation:fadeIn .8s ease forwards;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- NAVIGATION -->
 <nav>
     <div class="logo">QuantumTrader</div>
     <div id="menuBtn">☰</div>
@@ -162,14 +150,11 @@ h1{
     </ul>
 </nav>
 
-<!-- TOUCH + CURSOR -->
 <div id="cursor"></div>
 <div id="touchGlow"></div>
 
-<!-- GALAXY CANVAS -->
 <canvas id="galaxy"></canvas>
 
-<!-- INTRO -->
 <section id="intro">
     <h1>Edoardo Cattabriga</h1>
     <div class="panel">
@@ -178,7 +163,6 @@ h1{
     </div>
 </section>
 
-<!-- SKILLS -->
 <section id="skills">
     <h1>Skills</h1>
     <div class="grid">
@@ -190,14 +174,12 @@ h1{
     </div>
 </section>
 
-<!-- CHARTS -->
 <section id="charts">
     <h1>Trading Charts</h1>
     <div class="chart-box"><canvas id="chart1"></canvas></div>
     <div class="chart-box"><canvas id="chart2"></canvas></div>
 </section>
 
-<!-- SYSTEMS -->
 <section id="systems">
     <h1>Systems</h1>
     <div class="grid">
@@ -210,7 +192,6 @@ h1{
     </div>
 </section>
 
-<!-- REAL-TIME PRICES -->
 <section id="prices">
     <h1>Crypto Live Prices</h1>
     <div class="panel" id="livePrices">
@@ -218,36 +199,31 @@ h1{
     </div>
 </section>
 
-<!-- TERMINAL -->
 <section id="terminalSec">
     <h1>AI Terminal</h1>
     <div id="terminal"></div>
 </section>
 
 <script>
-/* =============================================================
-   MOBILE MENU
-============================================================= */
+/* ================= MOBILE MENU ================= */
 const menuBtn=document.getElementById("menuBtn");
 const navList=document.querySelector("nav ul");
 menuBtn.onclick=()=>navList.classList.toggle("show");
 
-/* =============================================================
-   SECTION REVEAL
-============================================================= */
+/* ================= SECTION REVEAL ================= */
 const obs=new IntersectionObserver(e=>{
     e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible")});
 });
 document.querySelectorAll("section").forEach(s=>obs.observe(s));
 
-/* =============================================================
-   CURSOR + TOUCH
-============================================================= */
+/* ================= CURSOR ================= */
 const cursor=document.getElementById("cursor");
 document.addEventListener("mousemove",e=>{
     cursor.style.left=e.clientX+"px";
     cursor.style.top=e.clientY+"px";
 });
+
+/* ================= TOUCH GLOW ================= */
 let glow=document.getElementById("touchGlow");
 document.addEventListener("touchstart",e=>{
     let t=e.touches[0];
@@ -257,73 +233,113 @@ document.addEventListener("touchstart",e=>{
 });
 document.addEventListener("touchend",()=>glow.style.opacity=0);
 
-/* =============================================================
-   PARALLAX
-============================================================= */
-document.addEventListener("mousemove",e=>{
-    if(innerWidth<800)return;
-    let x=(e.clientX/innerWidth-0.5)*20;
-    let y=(e.clientY/innerHeight-0.5)*20;
-    px1.style.transform=`translate(${x}px,${y}px)`;
-    px2.style.transform=`translate(${-x}px,${-y}px)`;
-});
-
-/* =============================================================
-   3D GALAXY + 3D COINS
-============================================================= */
+/* ================= 3D GALAXY — NO SUN/MOON ================= */
 let canvas=document.getElementById("galaxy"),
     scene=new THREE.Scene(),
     cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000),
     renderer=new THREE.WebGLRenderer({canvas,alpha:true});
+
 renderer.setSize(innerWidth,innerHeight);
 cam.position.z=1;
 
 /* Stars */
-let sCount=innerWidth<600?1800:5000;
-let starGeo=new THREE.BufferGeometry();
-let pos=[];
+let sCount=innerWidth < 600 ? 1800 : 5000;
+let starGeo = new THREE.BufferGeometry();
+let pos = [];
+
 for(let i=0;i<sCount;i++){
-    pos.push((Math.random()-0.5)*6,(Math.random()-0.5)*6,(Math.random()-0.5)*6);
+    pos.push(
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6
+    );
 }
-starGeo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
-let stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:0.005}));
+
+starGeo.setAttribute("position", new THREE.Float32BufferAttribute(pos,3));
+
+let stars = new THREE.Points(
+    starGeo,
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.005 })
+);
+
 scene.add(stars);
 
-/* =============================================================
-   CHARTS
-============================================================= */
+/* Ambient Light */
+let light=new THREE.PointLight(0xffffff,1);
+light.position.set(3,3,3);
+scene.add(light);
+
+function render3D(){
+    stars.rotation.y += 0.0006;
+    renderer.render(scene, cam);
+    requestAnimationFrame(render3D);
+}
+
+render3D();
+
+/* Resize */
+addEventListener("resize",()=>{
+    cam.aspect = innerWidth/innerHeight;
+    cam.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+});
+
+/* ================= CHARTS ================= */
 new Chart(chart1,{
     type:"line",
     data:{
         labels:[...Array(60).keys()],
-        datasets:[{label:"Portfolio Value",data:[...Array(60)].map(()=>1500+Math.random()*500),borderColor:"cyan",backgroundColor:"rgba(0,255,255,0.15)",fill:true,tension:.3}]
+        datasets:[{
+            label:"Portfolio Value",
+            data:[...Array(60)].map(()=>1500+Math.random()*500),
+            borderColor:"cyan",
+            backgroundColor:"rgba(0,255,255,0.15)",
+            fill:true,
+            tension:.3
+        }]
     },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:"white"}}},
+        scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}
+    }
 });
 
 new Chart(chart2,{
     type:"line",
     data:{
         labels:[...Array(60).keys()],
-        datasets:[{label:"Drawdown",data:[...Array(60)].map(()=>-(Math.random()*300)),borderColor:"magenta",backgroundColor:"rgba(255,0,255,0.15)",fill:true,tension:.35}]
+        datasets:[{
+            label:"Drawdown",
+            data:[...Array(60)].map(()=>-(Math.random()*300)),
+            borderColor:"magenta",
+            backgroundColor:"rgba(255,0,255,0.15)",
+            fill:true,
+            tension:.35
+        }]
     },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:"white"}}},
+        scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}
+    }
 });
 
-/* =============================================================
-   REAL-TIME CRYPTO PRICES (BINANCE)
-============================================================= */
+/* ================= LIVE PRICES ================= */
 let priceBox=document.getElementById("livePrices");
 let ws=new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+
 ws.onmessage=e=>{
     let data=JSON.parse(e.data);
-
     let wanted=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","ADAUSDT"];
 
     let out="";
     for(let x of data){
         if(wanted.includes(x.s)){
-            out+=`<div style="margin:8px 0;font-family:Orbitron">
+            out+=`
+            <div style="margin:8px 0;font-family:Orbitron">
                 <b>${x.s}</b> — ${parseFloat(x.c).toFixed(2)}
             </div>`;
         }
@@ -331,11 +347,10 @@ ws.onmessage=e=>{
     priceBox.innerHTML=out;
 };
 
-/* =============================================================
-   TERMINAL LOG
-============================================================= */
+/* ================= TERMINAL ================= */
 let term=document.getElementById("terminal");
 function log(t){term.innerHTML+=t+"<br>";term.scrollTop=term.scrollHeight;}
+
 let msgs=[
     "> Initializing trading engine...",
     "> Connecting to Binance feeds...",
@@ -343,9 +358,11 @@ let msgs=[
     "> AI prediction engine: ACTIVE",
     "> Monitoring volatility clusters..."
 ];
+
 let i=0;
 setInterval(()=>{log(msgs[i%msgs.length]);i++;},900);
 
 </script>
+
 </body>
 </html>
