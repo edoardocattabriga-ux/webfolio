@@ -1,3 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Edoardo Cattabriga — Quantum Trading Universe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+/* =======================================================
+   GLOBAL + RESET
+======================================================= */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    background:#000;color:#fff;font-family:Montserrat,sans-serif;
+    overflow-x:hidden;-webkit-tap-highlight-color:transparent;
+}
+
+/* Dynamic root scaling */
+html{font-size:16px}
+@media(max-width:700px){html{font-size:14px}}
+
+nav{
+    position:fixed;top:0;left:0;width:100%;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:15px 25px;
+    background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
+    z-index:9999;
+}
+nav .logo{font-family:Orbitron;font-size:1.4rem;text-shadow:0 0 10px cyan;}
+nav ul{display:flex;gap:25px;list-style:none}
+nav ul li a{color:white;text-decoration:none;font-family:Orbitron}
+#menuBtn{
+    display:none;font-size:1.8rem;cursor:pointer;
+}
+@media(max-width:800px){
+    nav ul{
+        position:fixed;top:70px;right:-100%;
+        flex-direction:column;background:rgba(0,0,0,0.9);
+        width:200px;padding:30px;transition:.3s;gap:20px;border-left:2px solid cyan;
+    }
+    nav ul.show{right:0;}
+    #menuBtn{display:block;}
+}
+
+/* =======================================================
+   SECTIONS
+======================================================= */
+section{
+    min-height:100vh;padding:130px 20px 80px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    opacity:0;transform:translateY(40px);transition:1s;
+}
+section.visible{opacity:1;transform:translateY(0);}
+
+h1{
+    font-family:Orbitron;font-size:3rem;text-shadow:0 0 15px cyan;
+}
+@media(max-width:700px){h1{font-size:2.2rem}}
+
+/* =======================================================
+   PANELS
+======================================================= */
+.panel{
+    width:100%;max-width:900px;padding:25px;border-radius:15px;
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(6px);
+    box-shadow:0 0 25px cyan;text-align:center;line-height:1.7rem;
+}
+
+/* =======================================================
+   CURSOR + TOUCH GLOW
+======================================================= */
+#cursor{
+    position:fixed;width:18px;height:18px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,white,rgba(255,255,255,0));
+    box-shadow:0 0 20px cyan,0 0 35px magenta;
+    z-index:9999;transition:transform .05s linear;
+}
+@media(max-width:900px){#cursor{display:none}}
+
+#touchGlow{
+    position:fixed;width:90px;height:90px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(0,255,255,0.4),rgba(255,0,255,0));
+    z-index:9990;opacity:0;transition:.25s;
+}
+
+/* =======================================================
+   3D CANVAS
+======================================================= */
+#galaxy{
+    position:fixed;top:0;left:0;width:100%;height:100%;z-index:-10;
+}
+
+/* =======================================================
+   GRID TILES
+======================================================= */
+.grid{
+    display:flex;flex-wrap:wrap;gap:25px;justify-content:center;width:100%;
+}
+.tile{
+    width:260px;height:150px;border-radius:15px;
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(4px);
+    display:flex;justify-content:center;align-items:center;
+    font-family:Orbitron;border:1px solid cyan;transition:.3s;
+}
+.tile:hover{transform:translateY(-10px);box-shadow:0 0 35px magenta;}
+@media(max-width:600px){.tile{width:90%;height:120px;}}
+
+/* =======================================================
+   CHART CONTAINERS
+======================================================= */
+.chart-box{
+    width:100%;max-width:900px;height:420px;
+    background:rgba(255,255,255,0.05);padding:10px;
+    border-radius:15px;margin-bottom:35px;
+}
+@media(max-width:600px){.chart-box{height:300px}}
+
+/* =======================================================
+   TERMINAL
+======================================================= */
+#terminal{
+    width:100%;max-width:900px;height:240px;
+    background:black;color:#0ff;border:2px solid #0ff;
+    padding:10px;overflow:auto;font-family:monospace;
+    border-radius:10px;
+}
+
+.fadeIn{animation:fadeIn .8s ease forwards;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">QuantumTrader</div>
+    <div id="menuBtn">☰</div>
+    <ul>
+        <li><a href="#intro">Intro</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#charts">Charts</a></li>
+        <li><a href="#systems">Systems</a></li>
+        <li><a href="#prices">Prices</a></li>
+        <li><a href="#terminalSec">Terminal</a></li>
+    </ul>
+</nav>
+
+<div id="cursor"></div>
+<div id="touchGlow"></div>
+
+<canvas id="galaxy"></canvas>
+
+<section id="intro">
+    <h1>Edoardo Cattabriga</h1>
+    <div class="panel">
+        Quantum-grade trading systems, AI prediction engines, and full-stack
+        market intelligence — optimized for both desktop and mobile.
+    </div>
+</section>
+
+<section id="skills">
+    <h1>Skills</h1>
+    <div class="grid">
+        <div class="tile">Quant Systems</div>
+        <div class="tile">HFT Engines</div>
+        <div class="tile">AI Forecasting</div>
+        <div class="tile">Risk Modeling</div>
+        <div class="tile">Orderflow Analysis</div>
+    </div>
+</section>
+
+<section id="charts">
+    <h1>Trading Charts</h1>
+    <div class="chart-box"><canvas id="chart1"></canvas></div>
+    <div class="chart-box"><canvas id="chart2"></canvas></div>
+</section>
+
+<section id="systems">
+    <h1>Systems</h1>
+    <div class="grid">
+        <div class="tile">Neural Market Pulse</div>
+        <div class="tile">Risk Fusion Engine</div>
+        <div class="tile">Orderbook Heatmap AI</div>
+        <div class="tile">HFT Optimizer</div>
+        <div class="tile">Volatility Surface Engine</div>
+        <div class="tile">Strategy PnL Visualizer</div>
+    </div>
+</section>
+
+<section id="prices">
+    <h1>Crypto Live Prices</h1>
+    <div class="panel" id="livePrices">
+        Loading live prices…
+    </div>
+</section>
+
+<section id="terminalSec">
+    <h1>AI Terminal</h1>
+    <div id="terminal"></div>
+</section>
+
+<script>
+/* ================= MOBILE MENU ================= */
+const menuBtn=document.getElementById("menuBtn");
+const navList=document.querySelector("nav ul");
+menuBtn.onclick=()=>navList.classList.toggle("show");
+
+/* ================= SECTION REVEAL ================= */
+const obs=new IntersectionObserver(e=>{
+    e.forEach(x=>{if(x.isIntersecting)x.target.classList.add("visible")});
+});
+document.querySelectorAll("section").forEach(s=>obs.observe(s));
+
+/* ================= CURSOR ================= */
+const cursor=document.getElementById("cursor");
+document.addEventListener("mousemove",e=>{
+    cursor.style.left=e.clientX+"px";
+    cursor.style.top=e.clientY+"px";
+});
+
+/* ================= TOUCH GLOW ================= */
+let glow=document.getElementById("touchGlow");
+document.addEventListener("touchstart",e=>{
+    let t=e.touches[0];
+    glow.style.left=t.clientX-45+"px";
+    glow.style.top=t.clientY-45+"px";
+    glow.style.opacity=1;
+});
+document.addEventListener("touchend",()=>glow.style.opacity=0);
+
+/* ================= 3D GALAXY — NO SUN/MOON ================= */
+let canvas=document.getElementById("galaxy"),
+    scene=new THREE.Scene(),
+    cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000),
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true});
+
+renderer.setSize(innerWidth,innerHeight);
+cam.position.z=1;
+
+/* Stars */
+let sCount=innerWidth < 600 ? 1800 : 5000;
+let starGeo = new THREE.BufferGeometry();
+let pos = [];
+
+for(let i=0;i<sCount;i++){
+    pos.push(
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6,
+        (Math.random()-0.5)*6
+    );
+}
+
+starGeo.setAttribute("position", new THREE.Float32BufferAttribute(pos,3));
+
+let stars = new THREE.Points(
+    starGeo,
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.005 })
+);
+
+scene.add(stars);
+
+/* Ambient Light */
+let light=new THREE.PointLight(0xffffff,1);
+light.position.set(3,3,3);
+scene.add(light);
+
+function render3D(){
+    stars.rotation.y += 0.0006;
+    renderer.render(scene, cam);
+    requestAnimationFrame(render3D);
+}
+
+render3D();
+
+/* Resize */
+addEventListener("resize",()=>{
+    cam.aspect = innerWidth/innerHeight;
+    cam.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+});
+
+/* ================= CHARTS ================= */
+new Chart(chart1,{
+    type:"line",
+    data:{
+        labels:[...Array(60).keys()],
+        datasets:[{
+            label:"Portfolio Value",
+            data:[...Array(60)].map(()=>1500+Math.random()*500),
+            borderColor:"cyan",
+            backgroundColor:"rgba(0,255,255,0.15)",
+            fill:true,
+            tension:.3
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:"white"}}},
+        scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}
+    }
+});
+
+new Chart(chart2,{
+    type:"line",
+    data:{
+        labels:[...Array(60).keys()],
+        datasets:[{
+            label:"Drawdown",
+            data:[...Array(60)].map(()=>-(Math.random()*300)),
+            borderColor:"magenta",
+            backgroundColor:"rgba(255,0,255,0.15)",
+            fill:true,
+            tension:.35
+        }]
+    },
+    options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:"white"}}},
+        scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}
+    }
+});
+
+/* ================= LIVE PRICES ================= */
+let priceBox=document.getElementById("livePrices");
+let ws=new WebSocket("wss://stream.binance.com:9443/ws/!ticker@arr");
+
+ws.onmessage=e=>{
+    let data=JSON.parse(e.data);
+    let wanted=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","ADAUSDT"];
+
+    let out="";
+    for(let x of data){
+        if(wanted.includes(x.s)){
+            out+=`
+            <div style="margin:8px 0;font-family:Orbitron">
+                <b>${x.s}</b> — ${parseFloat(x.c).toFixed(2)}
+            </div>`;
+        }
+    }
+    priceBox.innerHTML=out;
+};
+
+/* ================= TERMINAL ================= */
+let term=document.getElementById("terminal");
+function log(t){term.innerHTML+=t+"<br>";term.scrollTop=term.scrollHeight;}
+
+let msgs=[
+    "> Initializing trading engine...",
+    "> Connecting to Binance feeds...",
+    "> Latency: 1.2ms",
+    "> AI prediction engine: ACTIVE",
+    "> Monitoring volatility clusters..."
+];
+
+let i=0;
+setInterval(()=>{log(msgs[i%msgs.length]);i++;},900);
+
+</script>
+
+<!-- ================= AI CHAT BOT (BOTTOM-LEFT) ================= -->
+<style>
+#chatbotToggle{
+    position:fixed;
+    bottom:20px;left:20px;
+    width:60px;height:60px;
+    border-radius:50%;
+    background:linear-gradient(45deg,cyan,magenta);
+    display:flex;align-items:center;justify-content:center;
+    color:black;font-size:28px;font-weight:bold;
+    cursor:pointer;z-index:99999;
+    box-shadow:0 0 20px cyan;
+}
+#chatbotWindow{
+    position:fixed;
+    bottom:90px;left:20px;
+    width:280px;height:360px;
+    background:rgba(0,0,0,0.85);
+    border:2px solid cyan;border-radius:10px;
+    display:none;flex-direction:column;
+    z-index:99999;
+    backdrop-filter:blur(5px);
+}
+#chatbotWindow header{
+    padding:10px;font-family:Orbitron;
+    text-align:center;border-bottom:1px solid cyan;
+}
+#chatbotMessages{
+    flex:1;overflow-y:auto;padding:10px;font-size:0.85rem;
+}
+#chatbotInputArea{
+    display:flex;border-top:1px solid cyan;
+}
+#chatbotInput{
+    flex:1;padding:8px;background:black;color:white;
+    border:none;outline:none;
+}
+#chatbotSend{
+    width:60px;background:cyan;border:none;color:black;
+    font-weight:bold;cursor:pointer;
+}
+.botMsg{color:cyan;margin:5px 0;}
+.userMsg{color:magenta;margin:5px 0;text-align:right;}
+</style>
+
+<div id="chatbotToggle">💬</div>
+
+<div id="chatbotWindow">
+    <header>AI Assistant</header>
+    <div id="chatbotMessages"></div>
+    <div id="chatbotInputArea">
+        <input id="chatbotInput" placeholder="Ask me anything...">
+        <button id="chatbotSend">Send</button>
+    </div>
+</div>
+
 <script>
 // ===== OPEN/CLOSE CHAT =====
 const botBtn = document.getElementById("chatbotToggle");
@@ -6,7 +428,7 @@ botBtn.onclick = () => {
     botWin.style.display = botWin.style.display === "flex" ? "none" : "flex";
 };
 
-// ===== ELEMENTS =====
+// ===== BASIC AI RESPONSE (LOCAL LOGIC, NO SERVER) =====
 const botMsgBox = document.getElementById("chatbotMessages");
 const botInput = document.getElementById("chatbotInput");
 const botSend = document.getElementById("chatbotSend");
@@ -17,61 +439,140 @@ function botReply(text){
     botMsgBox.scrollTop = botMsgBox.scrollHeight;
 }
 
-/* =====================================================
-   INTERNET SEARCH (NO API KEY) — DuckDuckGo Instant Answer
-   ===================================================== */
-async function internetSearch(query){
-    try {
-        const url = "https://api.duckduckgo.com/?q=" + encodeURIComponent(query) + "&format=json&no_redirect=1&no_html=1";
+function sendUserMessage(){
+    let text = botInput.value.trim();
+    if(!text) return;
+    botMsgBox.innerHTML += `<div class="userMsg">${text}</div>`;
+    botMsgBox.scrollTop = botMsgBox.scrollHeight;
+
+    botInput.value = "";
+
+    // Simple built-in AI replies
+    setTimeout(()=>{
+        let reply = "I’m here — what do you want to analyze?";
+        if(text.toLowerCase().includes("hello")) reply = "Hello! How can I assist your trading universe?";
+        if(text.toLowerCase().includes("btc")) reply = "BTC market conditions look volatile — check orderflow and liquidity walls.";
+        if(text.toLowerCase().includes("strategy")) reply = "I can help outline quant or HFT strategies if you want.";
+        botReply(reply);
+    },600);
+}
+
+botSend.onclick = sendUserMessage;
+botInput.addEventListener("keypress", e => { if(e.key === "Enter") sendUserMessage(); });
+</script>
+<!-- ================= INTERNET SEARCH CHATBOT (NO API KEY) ================= -->
+<style>
+#webChatToggle{
+    position:fixed;
+    bottom:20px;right:20px;
+    width:60px;height:60px;
+    background:linear-gradient(45deg,#00eaff,#ff00ff);
+    border-radius:50%;
+    display:flex;justify-content:center;align-items:center;
+    color:black;font-size:30px;
+    cursor:pointer;z-index:999999;
+    box-shadow:0 0 20px #0ff;
+}
+#webChatWindow{
+    position:fixed;
+    bottom:90px;right:20px;
+    width:300px;height:380px;
+    background:rgba(0,0,0,0.9);
+    border:2px solid #0ff;
+    border-radius:12px;
+    display:none;flex-direction:column;
+    z-index:999999;
+    backdrop-filter:blur(6px);
+}
+#webChatWindow header{
+    padding:10px;text-align:center;font-family:Orbitron;
+    border-bottom:1px solid #0ff;color:#0ff;
+}
+#webChatMessages{flex:1;padding:10px;overflow-y:auto;font-size:0.9rem;}
+#webChatInputArea{display:flex;border-top:1px solid #0ff;}
+#webChatInput{
+    flex:1;background:black;color:white;border:none;outline:none;
+    padding:8px;
+}
+#webChatSend{
+    width:70px;background:#0ff;color:black;border:none;cursor:pointer;
+}
+.webBot{color:#0ff;margin:6px 0;}
+.webUser{color:#f0f;margin:6px 0;text-align:right;}
+</style>
+
+<div id="webChatToggle">🌐</div>
+
+<div id="webChatWindow">
+    <header>Web Search AI</header>
+    <div id="webChatMessages"></div>
+    <div id="webChatInputArea">
+        <input id="webChatInput" placeholder="Search the web...">
+        <button id="webChatSend">Send</button>
+    </div>
+</div>
+
+<script>
+// OPEN / CLOSE
+const webBtn = document.getElementById("webChatToggle");
+const webWin = document.getElementById("webChatWindow");
+
+webBtn.onclick = () => {
+    webWin.style.display = webWin.style.display === "flex" ? "none" : "flex";
+};
+
+// ELEMENTS
+const webBox = document.getElementById("webChatMessages");
+const webInput = document.getElementById("webChatInput");
+const webSend = document.getElementById("webChatSend");
+
+function webBotReply(t){
+    webBox.innerHTML += `<div class="webBot">${t}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+}
+
+// DUCKDUCKGO INTERNET SEARCH (NO API KEY)
+async function searchWeb(q){
+    const url = "https://api.duckduckgo.com/?q=" + encodeURIComponent(q) + "&format=json&no_redirect=1&no_html=1";
+    try{
         const res = await fetch(url);
         const data = await res.json();
 
-        // Priority 1: Abstract (direct answer)
-        if (data.Abstract && data.Abstract.length > 3) {
-            return data.Abstract;
+        if(data.Abstract) return data.Abstract;
+        if(data.RelatedTopics && data.RelatedTopics.length){
+            let t = data.RelatedTopics[0];
+            if(t.Text) return t.Text;
         }
 
-        // Priority 2: RelatedTopics (fallback)
-        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-            let topic = data.RelatedTopics[0];
-            if (topic.Text) return topic.Text;
-        }
-
-        // Nothing found
-        return "I searched the web, but couldn't find a clear answer.";
-    } catch (err) {
-        return "Internet search failed (network or API issue).";
+        return "No results found on the web.";
+    }
+    catch{
+        return "Connection error while searching the web.";
     }
 }
 
-/* =====================================================
-   SEND MESSAGE
-   ===================================================== */
-async function sendUserMessage(){
-    let text = botInput.value.trim();
+// SENDING MESSAGE
+async function sendWebMsg(){
+    let text = webInput.value.trim();
     if(!text) return;
 
-    // Show user message
-    botMsgBox.innerHTML += `<div class="userMsg">${text}</div>`;
-    botInput.value = "";
-    botMsgBox.scrollTop = botMsgBox.scrollHeight;
+    webBox.innerHTML += `<div class="webUser">${text}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+    webInput.value = "";
 
-    // Temporary "thinking..."
-    botReply("🔍 Searching…");
+    webBotReply("🔍 Searching…");
 
-    // Fetch online info
-    let answer = await internetSearch(text);
+    let result = await searchWeb(text);
 
-    // Remove last "Searching…" and replace
-    botMsgBox.innerHTML = botMsgBox.innerHTML.replace("🔍 Searching…", "");
-
-    // Output final answer
-    botReply(answer);
+    // Replace the searching message
+    webBox.innerHTML = webBox.innerHTML.replace("🔍 Searching…", "");
+    webBotReply(result);
 }
 
-/* Button + Enter listener */
-botSend.onclick = sendUserMessage;
-botInput.addEventListener("keypress", e => { 
-    if(e.key === "Enter") sendUserMessage(); 
-});
+webSend.onclick = sendWebMsg;
+webInput.addEventListener("keypress", e => { if(e.key === "Enter") sendWebMsg(); });
 </script>
+<!-- ================= END INTERNET SEARCH CHATBOT ================= -->
+
+</body>
+</html>
