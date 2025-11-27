@@ -602,55 +602,33 @@ function webBotReply(t){
     webBox.scrollTop = webBox.scrollHeight;
 }
 
-// =========================
-// ** MAIN WORKING FUNCTION **
-// DuckDuckGo HTML scraper (legal)
-// =========================
+// =============== 100% WORKING SEARCH (NO API KEY) ==================
 async function searchWeb(query){
     try{
-        const url = "https://cors.isomorphic-git.org/https://duckduckgo.com/html/?q=" 
-                    + encodeURIComponent(query);
+        const url =
+          "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
+          + encodeURIComponent(query) +
+          "&format=json&origin=*";
 
         let response = await fetch(url);
-        let html = await response.text();
+        let data = await response.json();
 
-        let div = document.createElement("div");
-        div.innerHTML = html;
+        if (!data.query.search.length)
+            return "No results found.";
 
-        let results = [...div.querySelectorAll(".result__snippet")];
+        let result = data.query.search[0];
+        let snippet = result.snippet
+            .replace(/<\/?span[^>]*>/g, "")
+            .replace(/<\/?div[^>]*>/g, "")
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, '&')
+            .trim();
 
-        if(results.length > 0){
-            return results[0].innerText.trim();
-        }
-
-        return "No results found.";
+        return snippet + "...";
     }
-    catch{
-        return "Error while searching the web.";
+    catch(e){
+        return "Search error.";
     }
 }
-
-// SEND MESSAGE
-async function sendWebMsg(){
-    let text = webInput.value.trim();
-    if(!text) return;
-
-    webBox.innerHTML += `<div class="webUser">${text}</div>`;
-    webBox.scrollTop = webBox.scrollHeight;
-    webInput.value = "";
-
-    webBotReply("🔍 Searching…");
-
-    let result = await searchWeb(text);
-
-    webBox.innerHTML = webBox.innerHTML.replace("🔍 Searching…", "");
-    webBotReply(result);
-}
-
-webSend.onclick = sendWebMsg;
-webInput.addEventListener("keypress", e => { if(e.key === "Enter") sendWebMsg(); });
-</script>
-<!-- ================= END INTERNET SEARCH CHATBOT ================= -->
-
 </body>
 </html>
