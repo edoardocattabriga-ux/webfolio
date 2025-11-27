@@ -531,27 +531,106 @@ function webBotReply(t){
     webBox.scrollTop = webBox.scrollHeight;
 }
 
-// DUCKDUCKGO INTERNET SEARCH (NO API KEY)
-async function searchWeb(q){
-    const url = "https://api.duckduckgo.com/?q=" + encodeURIComponent(q) + "&format=json&no_redirect=1&no_html=1";
-    try{
-        const res = await fetch(url);
-        const data = await res.json();
+<!-- ================= INTERNET SEARCH CHATBOT (FULL WORKING VERSION) ================= -->
+<style>
+#webChatToggle{
+    position:fixed;
+    bottom:20px;right:20px;
+    width:60px;height:60px;
+    background:linear-gradient(45deg,#00eaff,#ff00ff);
+    border-radius:50%;
+    display:flex;justify-content:center;align-items:center;
+    color:black;font-size:30px;
+    cursor:pointer;z-index:999999;
+    box-shadow:0 0 20px #0ff;
+}
+#webChatWindow{
+    position:fixed;
+    bottom:90px;right:20px;
+    width:300px;height:380px;
+    background:rgba(0,0,0,0.9);
+    border:2px solid #0ff;
+    border-radius:12px;
+    display:none;flex-direction:column;
+    z-index:999999;
+    backdrop-filter:blur(6px);
+}
+#webChatWindow header{
+    padding:10px;text-align:center;font-family:Orbitron;
+    border-bottom:1px solid #0ff;color:#0ff;
+}
+#webChatMessages{flex:1;padding:10px;overflow-y:auto;font-size:0.9rem;}
+#webChatInputArea{display:flex;border-top:1px solid #0ff;}
+#webChatInput{
+    flex:1;background:black;color:white;border:none;outline:none;
+    padding:8px;
+}
+#webChatSend{
+    width:70px;background:#0ff;color:black;border:none;cursor:pointer;
+}
+.webBot{color:#0ff;margin:6px 0;}
+.webUser{color:#f0f;margin:6px 0;text-align:right;}
+</style>
 
-        if(data.Abstract) return data.Abstract;
-        if(data.RelatedTopics && data.RelatedTopics.length){
-            let t = data.RelatedTopics[0];
-            if(t.Text) return t.Text;
+<div id="webChatToggle">🌐</div>
+
+<div id="webChatWindow">
+    <header>Web Search AI</header>
+    <div id="webChatMessages"></div>
+    <div id="webChatInputArea">
+        <input id="webChatInput" placeholder="Search the web...">
+        <button id="webChatSend">Send</button>
+    </div>
+</div>
+
+<script>
+// OPEN / CLOSE
+const webBtn = document.getElementById("webChatToggle");
+const webWin = document.getElementById("webChatWindow");
+
+webBtn.onclick = () => {
+    webWin.style.display = webWin.style.display === "flex" ? "none" : "flex";
+};
+
+// ELEMENTS
+const webBox = document.getElementById("webChatMessages");
+const webInput = document.getElementById("webChatInput");
+const webSend = document.getElementById("webChatSend");
+
+function webBotReply(t){
+    webBox.innerHTML += `<div class="webBot">${t}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+}
+
+// =========================
+// ** MAIN WORKING FUNCTION **
+// DuckDuckGo HTML scraper (legal)
+// =========================
+async function searchWeb(query){
+    try{
+        const url = "https://cors.isomorphic-git.org/https://duckduckgo.com/html/?q=" 
+                    + encodeURIComponent(query);
+
+        let response = await fetch(url);
+        let html = await response.text();
+
+        let div = document.createElement("div");
+        div.innerHTML = html;
+
+        let results = [...div.querySelectorAll(".result__snippet")];
+
+        if(results.length > 0){
+            return results[0].innerText.trim();
         }
 
-        return "No results found on the web.";
+        return "No results found.";
     }
     catch{
-        return "Connection error while searching the web.";
+        return "Error while searching the web.";
     }
 }
 
-// SENDING MESSAGE
+// SEND MESSAGE
 async function sendWebMsg(){
     let text = webInput.value.trim();
     if(!text) return;
@@ -564,7 +643,6 @@ async function sendWebMsg(){
 
     let result = await searchWeb(text);
 
-    // Replace the searching message
     webBox.innerHTML = webBox.innerHTML.replace("🔍 Searching…", "");
     webBotReply(result);
 }
