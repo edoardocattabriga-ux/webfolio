@@ -602,33 +602,86 @@ function webBotReply(t){
     webBox.scrollTop = webBox.scrollHeight;
 }
 
-// =============== 100% WORKING SEARCH (NO API KEY) ==================
-async function searchWeb(query){
-    try{
-        const url =
-          "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
-          + encodeURIComponent(query) +
-          "&format=json&origin=*";
+<!-- 🌐 FINAL WORKING CHATBOT (GITHUB PAGES COMPATIBLE) -->
+<script>
+// ----------------------------------------------------
+// OPEN / CLOSE
+// ----------------------------------------------------
+const webBtn = document.getElementById("webChatToggle");
+const webWin = document.getElementById("webChatWindow");
 
-        let response = await fetch(url);
+webBtn.onclick = () => {
+    webWin.style.display =
+        webWin.style.display === "flex" ? "none" : "flex";
+};
+
+// ----------------------------------------------------
+// ELEMENTS
+// ----------------------------------------------------
+const webBox = document.getElementById("webChatMessages");
+const webInput = document.getElementById("webChatInput");
+const webSend = document.getElementById("webChatSend");
+
+function webBotReply(t){
+    webBox.innerHTML += `<div class="webBot">${t}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+}
+
+// ----------------------------------------------------
+// 100% WORKING SEARCH (Wikipedia API) — GitHub Safe
+// ----------------------------------------------------
+async function searchWeb(query){
+    try {
+        const api =
+        "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
+        + encodeURIComponent(query)
+        + "&format=json&origin=*";
+
+        let response = await fetch(api);
         let data = await response.json();
 
-        if (!data.query.search.length)
-            return "No results found.";
+        if (!data.query || !data.query.search.length)
+            return "I couldn't find anything for that.";
 
         let result = data.query.search[0];
-        let snippet = result.snippet
-            .replace(/<\/?span[^>]*>/g, "")
-            .replace(/<\/?div[^>]*>/g, "")
-            .replace(/&quot;/g, '"')
-            .replace(/&amp;/g, '&')
+        let text = result.snippet
+            .replace(/<\/?[^>]+(>|$)/g, "")
             .trim();
 
-        return snippet + "...";
+        return text + "...";
     }
     catch(e){
-        return "Search error.";
+        return "Search error: " + e.message;
     }
 }
+
+// ----------------------------------------------------
+// SEND MESSAGE
+// ----------------------------------------------------
+async function sendWebMsg(){
+    let text = webInput.value.trim();
+    if (!text) return;
+
+    // user bubble
+    webBox.innerHTML += `<div class="webUser">${text}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+
+    webInput.value = "";
+    webBotReply("🔎 Searching...");
+
+    let result = await searchWeb(text);
+
+    // remove the "Searching..." bubble
+    let html = webBox.innerHTML;
+    webBox.innerHTML = html.replace("🔎 Searching...", "");
+
+    webBotReply(result);
+}
+
+webSend.onclick = sendWebMsg;
+webInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") sendWebMsg();
+});
+</script>
 </body>
 </html>
