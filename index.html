@@ -65,7 +65,13 @@ h1{font-family:Orbitron;font-size:3rem;text-shadow:0 0 15px cyan;}
    GRID TILES
 ======================================================= */
 .grid{display:flex;flex-wrap:wrap;gap:25px;justify-content:center;width:100%;}
-.tile{width:260px;height:150px;border-radius:15px;background:rgba(255,255,255,0.05);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;font-family:Orbitron;border:1px solid cyan;transition:.3s;}
+.tile{
+    width:260px;height:150px;border-radius:15px;
+    background:rgba(255,255,255,0.05);backdrop-filter:blur(4px);
+    display:flex;justify-content:center;align-items:center;
+    font-family:Orbitron;border:1px solid cyan;transition:.3s;
+    color:white;text-decoration:none;font-size:1rem;
+}
 .tile:hover{transform:translateY(-10px);box-shadow:0 0 35px magenta;}
 @media(max-width:600px){.tile{width:90%;height:120px;}}
 
@@ -124,11 +130,11 @@ h1{font-family:Orbitron;font-size:3rem;text-shadow:0 0 15px cyan;}
 <section id="skills">
     <h1>Skills</h1>
     <div class="grid">
-        <div class="tile">Quant Systems</div>
-        <div class="tile">HFT Engines</div>
-        <div class="tile">AI Forecasting</div>
-        <div class="tile">Risk Modeling</div>
-        <div class="tile">Orderflow Analysis</div>
+        <a class="tile" href="quant-systems.html">Quant Systems</a>
+        <a class="tile" href="hft-engines.html">HFT Engines</a>
+        <a class="tile" href="ai-forecasting.html">AI Forecasting</a>
+        <a class="tile" href="risk-modeling.html">Risk Modeling</a>
+        <a class="tile" href="orderflow-analysis.html">Orderflow Analysis</a>
     </div>
 </section>
 
@@ -201,6 +207,7 @@ scene=new THREE.Scene(),
 cam=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000),
 renderer=new THREE.WebGLRenderer({canvas,alpha:true});
 renderer.setSize(innerWidth,innerHeight); cam.position.z=1;
+
 let sCount=innerWidth<600?1800:5000;
 let starGeo=new THREE.BufferGeometry();
 let pos=[];
@@ -208,21 +215,51 @@ for(let i=0;i<sCount;i++){pos.push((Math.random()-0.5)*6,(Math.random()-0.5)*6,(
 starGeo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
 let stars=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:0.005}));
 scene.add(stars);
-let light=new THREE.PointLight(0xffffff,1); light.position.set(3,3,3); scene.add(light);
-function render3D(){stars.rotation.y+=0.0006;renderer.render(scene,cam);requestAnimationFrame(render3D);}
+
+let light=new THREE.PointLight(0xffffff,1); 
+light.position.set(3,3,3); 
+scene.add(light);
+
+function render3D(){
+    stars.rotation.y+=0.0006;
+    renderer.render(scene,cam);
+    requestAnimationFrame(render3D);
+}
 render3D();
-addEventListener("resize",()=>{cam.aspect=innerWidth/innerHeight; cam.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight);});
+
+addEventListener("resize",()=>{
+    cam.aspect=innerWidth/innerHeight; 
+    cam.updateProjectionMatrix(); 
+    renderer.setSize(innerWidth,innerHeight);
+});
 
 // ================= CHARTS =================
 new Chart(chart1,{
     type:"line",
-    data:{labels:[...Array(60).keys()],datasets:[{label:"Portfolio Value",data:[...Array(60)].map(()=>1500+Math.random()*500),borderColor:"cyan",backgroundColor:"rgba(0,255,255,0.15)",fill:true,tension:.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
+    data:{labels:[...Array(60).keys()],datasets:[{
+        label:"Portfolio Value",
+        data:[...Array(60)].map(()=>1500+Math.random()*500),
+        borderColor:"cyan",
+        backgroundColor:"rgba(0,255,255,0.15)",
+        fill:true,tension:.3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:"white"}}},
+    scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
 });
+
 new Chart(chart2,{
     type:"line",
-    data:{labels:[...Array(60).keys()],datasets:[{label:"Drawdown",data:[...Array(60)].map(()=>-(Math.random()*300)),borderColor:"magenta",backgroundColor:"rgba(255,0,255,0.15)",fill:true,tension:.35}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
+    data:{labels:[...Array(60).keys()],datasets:[{
+        label:"Drawdown",
+        data:[...Array(60)].map(()=>-(Math.random()*300)),
+        borderColor:"magenta",
+        backgroundColor:"rgba(255,0,255,0.15)",
+        fill:true,tension:.35
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:"white"}}},
+    scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
 });
 
 // ================= LIVE PRICES =================
@@ -232,15 +269,28 @@ ws.onmessage=e=>{
     let data=JSON.parse(e.data);
     let wanted=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","ADAUSDT"];
     let out="";
-    for(let x of data){if(wanted.includes(x.s)){out+=`<div style="margin:8px 0;font-family:Orbitron"><b>${x.s}</b> — ${parseFloat(x.c).toFixed(2)}</div>`;}}
+    for(let x of data){
+        if(wanted.includes(x.s)){
+            out+=`<div style="margin:8px 0;font-family:Orbitron">
+                    <b>${x.s}</b> — ${parseFloat(x.c).toFixed(2)}
+                  </div>`;
+        }
+    }
     priceBox.innerHTML=out;
 };
 
 // ================= TERMINAL =================
 let term=document.getElementById("terminal");
 function log(t){term.innerHTML+=t+"<br>";term.scrollTop=term.scrollHeight;}
-let msgs=["> Initializing trading engine...","> Connecting to Binance feeds...","> Latency: 1.2ms","> AI prediction engine: ACTIVE","> Monitoring volatility clusters..."];
-let i=0; setInterval(()=>{log(msgs[i%msgs.length]);i++;},900);
+let msgs=[
+    "> Initializing trading engine...",
+    "> Connecting to Binance feeds...",
+    "> Latency: 1.2ms",
+    "> AI prediction engine: ACTIVE",
+    "> Monitoring volatility clusters..."
+];
+let i=0; 
+setInterval(()=>{log(msgs[i%msgs.length]);i++;},900);
 
 // ================= WEB SEARCH CHATBOT =================
 const webBtn = document.getElementById("webChatToggle");
@@ -249,13 +299,18 @@ const webBox = document.getElementById("webChatMessages");
 const webInput = document.getElementById("webChatInput");
 const webSend = document.getElementById("webChatSend");
 
-webBtn.onclick = ()=>{webWin.style.display = (webWin.style.display === "flex") ? "none" : "flex";};
-function webBotReply(t){webBox.innerHTML += `<div class="webBot">${t}</div>`; webBox.scrollTop = webBox.scrollHeight;}
+webBtn.onclick = ()=>{
+    webWin.style.display = (webWin.style.display === "flex") ? "none" : "flex";
+};
+
+function webBotReply(t){
+    webBox.innerHTML += `<div class="webBot">${t}</div>`;
+    webBox.scrollTop = webBox.scrollHeight;
+}
 
 async function searchWeb(query){
     try{
-        const api = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="
-                    + encodeURIComponent(query) + "&format=json&origin=*";
+        const api = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="+encodeURIComponent(query)+"&format=json&origin=*";
         const response = await fetch(api);
         const data = await response.json();
         if(!data.query || !data.query.search.length) return "No results found.";
@@ -281,5 +336,6 @@ async function sendWebMsg(){
 webSend.onclick = sendWebMsg;
 webInput.addEventListener("keypress", e => {if(e.key==="Enter") sendWebMsg();});
 </script>
+
 </body>
 </html>
